@@ -1,165 +1,56 @@
 body{
   margin:0;
-  background: radial-gradient(circle, #1a0000, #000);
-  color:white;
-  font-family:Arial;
-  text-align:center;
-}
-
-.title{
-  color:#ff6a00;
-  text-shadow:0 0 10px orange,0 0 30px red;
-  margin:20px 0;
-}
-
-.container{
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  gap:15px;
-  padding:10px;
-}
-
-input{
-  width:80%;
-  padding:12px;
-  border-radius:10px;
-  border:none;
-  background:#111;
-  color:white;
-  box-shadow:0 0 10px cyan;
-}
-
-/* фишки */
-.tokens{
-  display:flex;
-  gap:15px;
-}
-
-.token{
-  width:50px;
-  height:50px;
-  border-radius:50%;
-  box-shadow:0 0 10px white;
-  cursor:pointer;
-  transition:0.3s;
-}
-
-.token.active{
-  transform:scale(1.2);
-  box-shadow:0 0 25px yellow;
-}
-
-.yellow{background:yellow;}
-.red{background:red;}
-.blue{background:cyan;}
-.purple{background:purple;}
-
-/* кнопки */
-button{
-  width:80%;
-  padding:15px;
-  border:none;
-  border-radius:12px;
-  font-size:18px;
-  background:linear-gradient(45deg,#ff6a00,#ff0000);
-  color:white;
-  box-shadow:0 0 15px orange;
-}
-
-.start{
-  background:linear-gradient(45deg,#00eaff,#0066ff);
-  box-shadow:0 0 20px cyan;
-}
-
-/* игроки */
-.playersBox{
-  width:80%;
-  background:#111;
-  border-radius:10px;
-  padding:10px;
-  box-shadow:0 0 15px cyan;
-}
-
-/* правила */
-.rules{
-  width:80%;
-  background:#111;
-  border-radius:10px;
-  padding:10px;
-  box-shadow:0 0 15px red;
-  font-size:14px;
-}
-
-/* скрытие */
-.hidden{
-  display:none;
-}
-
-body{
-  margin:0;
   background:black;
   color:white;
   font-family:Arial;
 }
 
-/* верх */
 #topUI{
   position:fixed;
   top:0;
   width:100%;
-  background:#000;
   padding:10px;
-  display:flex;
-  flex-direction:column;
-  gap:5px;
+  background:#000;
   box-shadow:0 0 20px cyan;
-  z-index:10;
-}
-
-.name{
-  font-size:14px;
 }
 
 .bar{
-  height:10px;
+  height:8px;
   background:#222;
-  border-radius:10px;
-  overflow:hidden;
+  margin-bottom:5px;
 }
 
 .fill{
   height:100%;
-  background:linear-gradient(90deg,cyan,blue);
+  background:cyan;
 }
 
-/* поле */
 .gameWrapper{
-  position:relative;
   margin-top:120px;
+  position:relative;
+  display:flex;
+  justify-content:center;
 }
 
 .board{
-  width:100%;
-  max-width:1024px;
-  display:block;
-  margin:auto;
+  width:95vw;
+  max-width:500px;
   box-shadow:0 0 30px orange;
 }
 
-/* фишки */
 #tokens{
   position:absolute;
-  top:0;
-  left:0;
+  width:95vw;
+  max-width:500px;
+  height:95vw;
+  max-height:500px;
 }
 
 .token{
-  width:25px;
-  height:25px;
+  width:20px;
+  height:20px;
   border-radius:50%;
   position:absolute;
-  box-shadow:0 0 15px white;
 }
 
 .yellow{background:yellow;}
@@ -167,7 +58,6 @@ body{
 .blue{background:cyan;}
 .purple{background:purple;}
 
-/* низ */
 .bottomUI{
   position:fixed;
   bottom:0;
@@ -175,20 +65,22 @@ body{
   text-align:center;
   padding:15px;
   background:#000;
-  box-shadow:0 0 20px orange;
 }
 
 button{
-  padding:15px 25px;
+  padding:15px;
   font-size:18px;
-  background:linear-gradient(45deg,#ff6a00,#ff0000);
+  background:orange;
   border:none;
   border-radius:10px;
-  color:white;
-  box-shadow:0 0 15px orange;
 }
 
-/* модалка */
+.card{
+  background:#111;
+  padding:20px;
+  border:2px solid red;
+}
+
 #modal{
   position:fixed;
   top:40%;
@@ -196,14 +88,6 @@ button{
   transform:translateX(-50%);
 }
 
-.card{
-  background:#111;
-  padding:20px;
-  border:2px solid red;
-  box-shadow:0 0 20px red;
-}
-
-/* победа */
 #winScreen{
   position:fixed;
   top:40%;
@@ -211,7 +95,6 @@ button{
   transform:translateX(-50%);
   font-size:30px;
   color:gold;
-  text-shadow:0 0 20px gold;
 }
 
 .hidden{
