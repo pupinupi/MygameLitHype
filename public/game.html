@@ -1,17 +1,31 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Игра</title>
+<link rel="stylesheet" href="style.css">
+</head>
+
 <body>
 
-<img src="board.jpg" class="board">
+<!-- 🔥 ШКАЛА ХАЙПА -->
+<div id="topUI"></div>
 
-<div id="tokens"></div>
+<!-- 🎮 ПОЛЕ -->
+<div class="gameWrapper">
+  <img src="board.jpg" class="board">
+  <div id="tokens"></div>
+</div>
 
-<button id="roll">🎲 Бросить кубик</button>
+<!-- 🎲 КНОПКА -->
+<div class="bottomUI">
+  <button id="rollBtn">🎲 Бросить кубик</button>
+  <div id="diceText"></div>
+</div>
 
-<div id="diceText"></div>
-
-<div id="hype"></div>
-
+<!-- 💥 МОДАЛКИ -->
 <div id="modal" class="hidden"></div>
-
 <div id="winScreen" class="hidden"></div>
 
 <audio id="diceSound" src="dice.mp3"></audio>
@@ -21,3 +35,4 @@
 <script src="client.js"></script>
 
 </body>
+</html>
