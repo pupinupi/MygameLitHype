@@ -5,13 +5,15 @@
   <title>Литвин: Путь к хайпу</title>
   <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
+
 <div id="game-container">
 
   <!-- 🔥 ШКАЛЫ -->
   <div id="hype-bars"></div>
 
-  <!-- 💡 СВЕТЯЩЕЕСЯ ПОЛЕ -->
+  <!-- 💡 ПОЛЕ -->
   <div class="board-wrapper">
     <canvas id="gameCanvas" width="1024" height="1024"></canvas>
   </div>
@@ -20,17 +22,9 @@
   <button id="rollButton">🎲 Бросить кубик</button>
 
 </div>
-  <div id="game-container">
-    <canvas id="gameCanvas" width="800" height="800"></canvas>
-    
-    <!-- Шкалы хайпа -->
-    <div id="hype-bars"></div>
 
-    <!-- Кнопка броска кубика -->
-    <button id="rollButton">🎲 Бросить кубик</button>
-  </div>
+<script src="/socket.io/socket.io.js"></script>
+<script src="client.js"></script>
 
-  <script src="/socket.io/socket.io.js"></script>
-  <script src="client.js"></script>
 </body>
 </html>
