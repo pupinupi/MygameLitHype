@@ -39,21 +39,42 @@ function drawPlayers(players){
 }
 
 function updateHype(players){
-  hype.innerHTML = players.map(p=>`${p.name}: ${p.hype}`).join("<br>");
+  hype.innerHTML = "";
+
+  players.forEach(p=>{
+    const wrap = document.createElement("div");
+
+    wrap.innerHTML = `
+      <div>${p.name} (${p.hype})</div>
+      <div class="hypeBar">
+        <div class="hypeFill" style="width:${Math.min(p.hype,70)/70*100}%"></div>
+      </div>
+    `;
+
+    hype.appendChild(wrap);
+  });
 }
 
 socket.on('scandal', i=>{
   scandalSound.play();
 
   const texts = [
-    "перегрел аудиторию🔥",
-    "громкий заголовок🫣",
-    "это монтаж😱",
-    "меня взломали#️⃣",
-    "подписчики в шоке😮",
-    "удаляй пока не поздно🤫",
-    "это контент🙄"
+    "🔥 перегрел аудиторию (-1 хайп)",
+    "🫣 громкий заголовок (-2 хайп)",
+    "😱 это монтаж (-3 хайп)",
+    "#️⃣ взломали канал (-3 хайп всем)",
+    "😮 подписчики в шоке (-4 хайп)",
+    "🤫 удаляй пока не поздно (-5 хайп)",
+    "🙄 контент не зашел (-5 хайп + пропуск хода)"
   ];
+
+  modal.innerHTML = `<div class="card">${texts[i]}</div>`;
+  modal.classList.remove('hidden');
+
+  setTimeout(()=>{
+    modal.classList.add('hidden');
+  },3000);
+});
 
   modal.innerHTML = `<div class="card">${texts[i]}</div>`;
   modal.classList.remove('hidden');
@@ -62,12 +83,34 @@ socket.on('scandal', i=>{
 });
 
 socket.on('risk', roll=>{
-  modal.innerHTML = `<div class="card">Риск! Выпало ${roll}</div>`;
+  const result = roll <=3 ? "-5 хайпа 😬" : "+5 хайпа 🚀";
+
+  modal.innerHTML = `
+    <div class="card">
+      🎲 РИСК! <br><br>
+      Выпало: ${roll} <br>
+      ${result}
+    </div>
+  `;
+
   modal.classList.remove('hidden');
   setTimeout(()=>modal.classList.add('hidden'),3000);
 });
 
 socket.on('win', player=>{
-  winScreen.innerHTML = `🏆 Победил ${player.name} (${player.hype} хайпа)`;
+  winScreen.innerHTML = `
+    🏆 ${player.name} <br>
+    ДОСТИГ ${player.hype} ХАЙПА 🔥
+  `;
   winScreen.classList.remove('hidden');
+});
+
+socket.on('update', game=>{
+  const myId = socket.id;
+  const current = game.players[game.turn];
+
+  roll.disabled = current.id !== myId;
+
+  drawPlayers(game.players);
+  updateHype(game.players);
 });
