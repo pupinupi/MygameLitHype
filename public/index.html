@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta charset="UTF-8">
 <title>Лобби</title>
 <link rel="stylesheet" href="style.css">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 
-<body>
+<body class="lobby">
 
 <h1 class="title">🔥 Литвин. Путь к хайпу 🔥</h1>
 
@@ -16,28 +16,30 @@
   <input id="name" placeholder="Имя">
   <input id="room" placeholder="Код комнаты">
 
+  <!-- 🎨 ВЫБОР ФИШКИ -->
   <div class="tokens">
-    <div class="token yellow" onclick="pick('yellow')"></div>
-    <div class="token red" onclick="pick('red')"></div>
-    <div class="token blue" onclick="pick('blue')"></div>
-    <div class="token purple" onclick="pick('purple')"></div>
+    <div class="tokenSelect red" data-color="red"></div>
+    <div class="tokenSelect yellow" data-color="yellow"></div>
+    <div class="tokenSelect blue" data-color="blue"></div>
+    <div class="tokenSelect purple" data-color="purple"></div>
   </div>
 
-  <button id="joinBtn" disabled>Войти</button>
+  <button id="joinBtn">Войти</button>
 
+  <!-- 👥 ИГРОКИ -->
   <div class="playersBox">
     <h3>Игроки:</h3>
     <div id="players"></div>
   </div>
 
-  <button id="startBtn" class="start hidden">🚀 Начать игру</button>
+  <button id="startBtn" class="startBtn hidden">🚀 Начать игру</button>
 
+  <!-- 📜 ПРАВИЛА -->
   <div class="rules">
     <h3>Правила</h3>
-    <p>Цель: 70 хайпа</p>
-    <p>Кубик → движение → действие клетки</p>
-    <p>Скандал и риск влияют на хайп</p>
-    <p>Хайп ≥ 70 = победа</p>
+    <p>Цель: набрать 70 хайпа</p>
+    <p>Бросай кубик → двигайся → выполняй клетку</p>
+    <p>Скандал и риск могут уменьшить хайп</p>
   </div>
 
 </div>
@@ -47,68 +49,57 @@
 <script>
 const socket = io();
 
-let token = null;
+let selected = null;
 let isHost = false;
 
-const nameInput = document.getElementById('name');
-const roomInput = document.getElementById('room');
-const joinBtn = document.getElementById('joinBtn');
-const startBtn = document.getElementById('startBtn');
-
-function pick(t){
-  token = t;
-  document.querySelectorAll('.token').forEach(el=>el.classList.remove('active'));
-  document.querySelector('.'+t).classList.add('active');
-  check();
-}
-
-function check(){
-  joinBtn.disabled = !(nameInput.value && roomInput.value && token);
-}
-
-nameInput.oninput = check;
-roomInput.oninput = check;
-
-joinBtn.onclick = ()=>{
-  const name = nameInput.value;
-  const room = roomInput.value;
-
-  localStorage.setItem('name', name);
-  localStorage.setItem('room', room);
-  localStorage.setItem('token', token);
-
-  socket.emit('join',{name,room,token});
-};
-
-socket.on('players', list=>{
-  document.getElementById('players').innerHTML =
-    list.map(p=>`<div>${p.name}</div>`).join('');
-
-  // первый игрок — хост
-  if(list[0].id === socket.id){
-    isHost = true;
-    startBtn.classList.remove('hidden');
-  }
-});
-
-  const tokens = document.querySelectorAll(".tokenSelect");
-
-tokens.forEach(t=>{
+// 🎨 выбор фишки
+document.querySelectorAll(".tokenSelect").forEach(t=>{
   t.onclick = ()=>{
-    tokens.forEach(el=>el.classList.remove("active"));
+    document.querySelectorAll(".tokenSelect").forEach(el=>el.classList.remove("active"));
     t.classList.add("active");
-
-    localStorage.setItem("token", t.dataset.color);
+    selected = t.dataset.color;
   };
 });
 
-startBtn.onclick = ()=>{
-  const room = localStorage.getItem('room');
-  socket.emit('startGame', room);
+// 🚪 вход
+document.getElementById("joinBtn").onclick = ()=>{
+  const name = document.getElementById("name").value;
+  const room = document.getElementById("room").value;
+
+  if(!name || !room || !selected){
+    alert("Заполни всё и выбери фишку");
+    return;
+  }
+
+  localStorage.setItem("room", room);
+
+  socket.emit("join", {
+    name,
+    room,
+    token: selected
+  });
 };
 
-socket.on('startGame', ()=>{
-  window.location = "game.html";
+// 👥 список игроков
+socket.on("players", players=>{
+  document.getElementById("players").innerHTML =
+    players.map(p=>`<div>${p.name} (${p.token})</div>`).join("");
+
+  // первый игрок = хост
+  if(players[0].id === socket.id){
+    isHost = true;
+    document.getElementById("startBtn").classList.remove("hidden");
+  }
+});
+
+// 🚀 старт
+document.getElementById("startBtn").onclick = ()=>{
+  socket.emit("startGame");
+};
+
+// ▶️ переход в игру
+socket.on("startGame", ()=>{
+  window.location.href = "game.html";
 });
 </script>
 
