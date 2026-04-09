@@ -93,3 +93,46 @@ socket.on("win", player=>{
 });
 
 boardImg.onload = draw;
+
+const overlay = document.getElementById("overlay");
+
+// 🔥 СКАНДАЛ
+socket.on("scandal", i=>{
+  const texts = [
+    "🔥 Перегрел аудиторию (-1)",
+    "🫣 Громкий заголовок (-2)",
+    "😱 Это монтаж (-3)",
+    "#️⃣ Взломали (-3 всем)",
+    "😮 Подписчики в шоке (-4)",
+    "🤫 Удаляй пока не поздно (-5)",
+    "🙄 Это контент (-5 + пропуск)"
+  ];
+
+  showCard(texts[i], "scandal");
+});
+
+// 🎲 РИСК
+socket.on("risk", roll=>{
+  const text = roll <=3 ? "−5 хайпа 😬" : "+5 хайпа 🚀";
+
+  showCard(`
+    🎲 РИСК<br><br>
+    Выпало: ${roll}<br>
+    ${text}
+  `, "risk");
+});
+
+// ⚖️ ПРОПУСК ХОДА
+function showSkip(){
+  showCard("⛔ Пропуск хода", "skip");
+}
+
+// 💥 ОБЩАЯ ФУНКЦИЯ
+function showCard(text, type){
+  overlay.innerHTML = `<div class="card ${type}">${text}</div>`;
+  overlay.classList.remove("hidden");
+
+  setTimeout(()=>{
+    overlay.classList.add("hidden");
+  },2500);
+}
