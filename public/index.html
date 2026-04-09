@@ -1,0 +1,50 @@
+<body>
+
+<h1 class="glow">🔥 Литвин. Путь к хайпу 🔥</h1>
+
+<input id="name" placeholder="Имя">
+<input id="room" placeholder="Код комнаты">
+
+<div class="tokens">
+  <div class="token yellow" onclick="pick('yellow')"></div>
+  <div class="token red" onclick="pick('red')"></div>
+  <div class="token blue" onclick="pick('blue')"></div>
+  <div class="token purple" onclick="pick('purple')"></div>
+</div>
+
+<button onclick="join()">Войти</button>
+
+<div id="players"></div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+const socket = io();
+let token;
+
+function pick(t){
+  token = t;
+  document.querySelectorAll('.token').forEach(el=>el.classList.remove('active'));
+  document.querySelector('.'+t).classList.add('active');
+}
+
+function join(){
+  const name = nameInput.value;
+  const room = roomInput.value;
+
+  localStorage.setItem('name', name);
+  localStorage.setItem('room', room);
+  localStorage.setItem('token', token);
+
+  socket.emit('join',{name,room,token});
+}
+
+socket.on('players', p=>{
+  players.innerHTML = p.map(x=>x.name).join("<br>");
+});
+
+socket.on('startGame', ()=>{
+  window.location = "game.html";
+});
+</script>
+
+</body>
