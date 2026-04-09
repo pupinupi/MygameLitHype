@@ -1,105 +1,95 @@
 const socket = io();
 
-// Canvas и контекст
+// 💥 берём данные из лобби
+const name = localStorage.getItem("name");
+const token = localStorage.getItem("token");
+const room = localStorage.getItem("room");
+
+// 💥 ПОВТОРНО ПОДКЛЮЧАЕМСЯ (ВАЖНО)
+socket.emit("join", {name, room, token});
+
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
 
-// Кнопка броска кубика
 const rollButton = document.getElementById("rollButton");
+const hypeBars = document.getElementById("hype-bars");
 
-// Изображение поля
 const boardImg = new Image();
 boardImg.src = 'board.jpg';
 
-// Массив координат клеток (20 клеток)
+// 📍 координаты
 const cells = [
-  {x: 50, y: 700}, {x: 150, y: 700}, {x: 250, y: 700}, {x: 350, y: 700}, {x: 450, y: 700},
-  {x: 550, y: 700}, {x: 650, y: 700}, {x: 750, y: 700}, {x: 750, y: 600}, {x: 750, y: 500},
-  {x: 750, y: 400}, {x: 750, y: 300}, {x: 650, y: 300}, {x: 550, y: 300}, {x: 450, y: 300},
-  {x: 350, y: 300}, {x: 250, y: 300}, {x: 150, y: 300}, {x: 50, y: 300}, {x: 50, y: 400}
+  {x:80,y:720},{x:200,y:720},{x:320,y:720},{x:450,y:720},{x:580,y:720},
+  {x:700,y:720},{x:820,y:720},{x:900,y:650},{x:900,y:520},{x:900,y:390},
+  {x:900,y:260},{x:820,y:180},{x:700,y:150},{x:580,y:150},{x:450,y:150},
+  {x:320,y:150},{x:200,y:150},{x:100,y:220},{x:100,y:350},{x:100,y:500}
 ];
 
-// Игроки
 let players = [];
 let currentTurn = 0;
 
-// Загрузка фишек
-const tokenColors = {
-  red: 'red',
-  yellow: 'yellow',
-  blue: 'blue',
-  purple: 'purple'
+// 🎨 цвета
+const colors = {
+  red: "red",
+  yellow: "yellow",
+  blue: "cyan",
+  purple: "purple"
 };
 
-// Функция отрисовки
-function drawGame(){
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  ctx.drawImage(boardImg, 0, 0, canvas.width, canvas.height);
+// 🎮 рисуем
+function draw(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  ctx.drawImage(boardImg,0,0,canvas.width,canvas.height);
 
-  // Отрисовка фишек
-  players.forEach((p, idx)=>{
-    const cell = cells[p.position];
-    ctx.fillStyle = tokenColors[p.token] || 'white';
+  players.forEach((p,i)=>{
+    const pos = cells[p.position];
+
     ctx.beginPath();
-    ctx.arc(cell.x, cell.y, 20, 0, Math.PI*2);
+    ctx.fillStyle = colors[p.token] || "white";
+    ctx.arc(pos.x + i*10, pos.y + i*10, 15, 0, Math.PI*2);
     ctx.fill();
-    ctx.strokeStyle = 'black';
-    ctx.stroke();
   });
 
-  // Шкалы хайпа
-  updateHypeBars();
+  drawHype();
 }
 
-// Шкалы хайпа
-function updateHypeBars(){
-  const container = document.getElementById("hype-bars");
-  container.innerHTML = '';
+// 🔥 хайп
+function drawHype(){
+  hypeBars.innerHTML = "";
+
   players.forEach(p=>{
-    const bar = document.createElement('div');
-    bar.style.margin = '5px';
-    bar.style.width = '200px';
-    bar.style.height = '20px';
-    bar.style.background = '#333';
-    bar.style.border = '2px solid #fff';
-    const fill = document.createElement('div');
-    fill.style.width = Math.min(p.hype,70)/70*100 + '%';
-    fill.style.height = '100%';
-    fill.style.background = tokenColors[p.token] || 'white';
-    bar.appendChild(fill);
-    container.appendChild(bar);
+    const div = document.createElement("div");
+
+    div.innerHTML = `
+      <div>${p.name}: ${p.hype}</div>
+      <div style="width:200px;height:10px;background:#333;">
+        <div style="width:${(p.hype/70)*100}%;height:10px;background:cyan;"></div>
+      </div>
+    `;
+
+    hypeBars.appendChild(div);
   });
 }
 
-// Обновление состояния игроков с сервера
-socket.on('update', game=>{
+// 🔄 обновление
+socket.on("update", game=>{
   players = game.players;
   currentTurn = game.turn;
-  drawGame();
+  draw();
 });
 
-// После броска кубика показываем roll
-socket.on('dice', roll=>{
-  console.log('Кубик:', roll);
+// 🎲 кубик
+rollButton.onclick = ()=>{
+  socket.emit("rollDice");
+};
+
+socket.on("dice", roll=>{
+  console.log("Выпало:", roll);
 });
 
-// Победа
-socket.on('win', player=>{
-  alert(`${player.name} победил!`);
+// 🏆 победа
+socket.on("win", player=>{
+  alert(`🏆 ${player.name} победил!`);
 });
 
-// Кнопка броска кубика
-rollButton.addEventListener('click', ()=>{
-  const myPlayer = players.find(p=>p.id === socket.id);
-  if(!myPlayer) return;
-  if(currentTurn !== players.indexOf(myPlayer)) return alert("Сейчас ход другого игрока!");
-  socket.emit('rollDice', 'room1');
-});
-
-// Отрисовка после загрузки поля
-boardImg.onload = drawGame;
-
-// Подключение к комнате
-const name = prompt("Введите имя");
-const token = prompt("Выберите цвет фишки (red, yellow, blue, purple)");
-socket.emit('join', {name, room: 'room1', token});
+boardImg.onload = draw;
