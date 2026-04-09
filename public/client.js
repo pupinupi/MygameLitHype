@@ -1,11 +1,11 @@
 const socket = io();
 
-// 💥 берём данные из лобби
+// 💥 данные из лобби
 const name = localStorage.getItem("name");
-const token = localStorage.getItem("token");
 const room = localStorage.getItem("room");
+const token = localStorage.getItem("token");
 
-// 💥 ПОВТОРНО ПОДКЛЮЧАЕМСЯ (ВАЖНО)
+// подключение
 socket.emit("join", {name, room, token});
 
 const canvas = document.getElementById("gameCanvas");
@@ -13,11 +13,12 @@ const ctx = canvas.getContext("2d");
 
 const rollButton = document.getElementById("rollButton");
 const hypeBars = document.getElementById("hype-bars");
+const overlay = document.getElementById("overlay");
 
 const boardImg = new Image();
-boardImg.src = 'board.jpg';
+boardImg.src = "board.jpg";
 
-// 📍 координаты
+// координаты
 const cells = [
   {x:80,y:720},{x:200,y:720},{x:320,y:720},{x:450,y:720},{x:580,y:720},
   {x:700,y:720},{x:820,y:720},{x:900,y:650},{x:900,y:520},{x:900,y:390},
@@ -28,15 +29,14 @@ const cells = [
 let players = [];
 let currentTurn = 0;
 
-// 🎨 цвета
 const colors = {
-  red: "red",
-  yellow: "yellow",
-  blue: "cyan",
-  purple: "purple"
+  red:"red",
+  yellow:"yellow",
+  blue:"cyan",
+  purple:"purple"
 };
 
-// 🎮 рисуем
+// рисуем
 function draw(){
   ctx.clearRect(0,0,canvas.width,canvas.height);
   ctx.drawImage(boardImg,0,0,canvas.width,canvas.height);
@@ -53,7 +53,7 @@ function draw(){
   drawHype();
 }
 
-// 🔥 хайп
+// хайп
 function drawHype(){
   hypeBars.innerHTML = "";
 
@@ -71,72 +71,68 @@ function drawHype(){
   });
 }
 
-// 🔄 обновление
+// обновление
 socket.on("update", game=>{
   players = game.players;
   currentTurn = game.turn;
   draw();
 });
 
-socket.on("skipNotice", ()=>{
-  showSkip();
-});
-
-// 🎲 кубик
+// кубик
 rollButton.onclick = ()=>{
   socket.emit("rollDice");
 };
 
+// результат
 socket.on("dice", roll=>{
   console.log("Выпало:", roll);
 });
 
-// 🏆 победа
+// победа
 socket.on("win", player=>{
   alert(`🏆 ${player.name} победил!`);
 });
 
-boardImg.onload = draw;
-
-const overlay = document.getElementById("overlay");
-
-// 🔥 СКАНДАЛ
+// скандал
 socket.on("scandal", i=>{
   const texts = [
     "🔥 Перегрел аудиторию (-1)",
     "🫣 Громкий заголовок (-2)",
     "😱 Это монтаж (-3)",
-    "#️⃣ Взломали (-3 всем)",
-    "😮 Подписчики в шоке (-4)",
-    "🤫 Удаляй пока не поздно (-5)",
-    "🙄 Это контент (-5 + пропуск)"
+    "#️⃣ Взлом (-3 всем)",
+    "😮 В шоке (-4)",
+    "🤫 Удаляй (-5)",
+    "🙄 Контент (-5 + пропуск)"
   ];
-
-  showCard(texts[i], "scandal");
+  showCard(texts[i], "red");
 });
 
-// 🎲 РИСК
+// риск
 socket.on("risk", roll=>{
-  const text = roll <=3 ? "−5 хайпа 😬" : "+5 хайпа 🚀";
-
-  showCard(`
-    🎲 РИСК<br><br>
-    Выпало: ${roll}<br>
-    ${text}
-  `, "risk");
+  showCard("🎲 Риск: "+roll, "cyan");
 });
 
-// ⚖️ ПРОПУСК ХОДА
-function showSkip(){
-  showCard("⛔ Пропуск хода", "skip");
-}
+// пропуск
+socket.on("skipNotice", ()=>{
+  showCard("⛔ Пропуск хода", "orange");
+});
 
-// 💥 ОБЩАЯ ФУНКЦИЯ
-function showCard(text, type){
-  overlay.innerHTML = `<div class="card ${type}">${text}</div>`;
+// карточка
+function showCard(text,color){
+  overlay.innerHTML = `<div style="
+    padding:30px;
+    background:#000;
+    color:${color};
+    font-size:24px;
+    border-radius:20px;
+    box-shadow:0 0 20px ${color};
+  ">${text}</div>`;
+
   overlay.classList.remove("hidden");
 
   setTimeout(()=>{
     overlay.classList.add("hidden");
   },2500);
 }
+
+boardImg.onload = draw;
