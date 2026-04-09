@@ -143,3 +143,154 @@ button{
 .yellow{background:yellow;}
 .blue{background:cyan;}
 .purple{background:purple;}
+
+
+body.lobby, body.game{
+  margin:0;
+  padding:0;
+  font-family:sans-serif;
+  background:black;
+  color:white;
+}
+
+.title{
+  text-align:center;
+  color:#ff6a00;
+  text-shadow:0 0 10px orange,0 0 30px red;
+  margin-top:10px;
+}
+
+.container{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:15px;
+}
+
+input{
+  width:80%;
+  padding:12px;
+  border-radius:10px;
+  border:none;
+  background:#111;
+  color:white;
+  box-shadow:0 0 10px cyan;
+}
+
+.tokens{
+  display:flex;
+  gap:10px;
+}
+
+.tokenSelect{
+  width:45px;
+  height:45px;
+  border-radius:50%;
+  border:2px solid white;
+  cursor:pointer;
+}
+
+.tokenSelect.active{
+  transform:scale(1.2);
+  box-shadow:0 0 20px cyan;
+}
+
+.red{background:red;}
+.yellow{background:yellow;}
+.blue{background:cyan;}
+.purple{background:purple;}
+}
+
+.playersBox, .rules{
+  width:80%;
+  background:#111;
+  padding:10px;
+  border-radius:10px;
+  box-shadow:0 0 15px cyan;
+  text-align:left;
+}
+
+.startBtn{
+  background:linear-gradient(45deg,#00eaff,#0066ff);
+  color:white;
+  padding:10px 20px;
+  border:none;
+  border-radius:10px;
+  cursor:pointer;
+}
+
+.hidden{
+  display:none;
+}
+
+/* Игра */
+.boardContainer{
+  position:relative;
+  display:flex;
+  justify-content:center;
+  margin-top:20px;
+}
+
+.board{
+  width:80%;
+  max-width:1024px;
+  border:2px solid cyan;
+}
+
+#tokens .token{
+  position:absolute;
+  width:30px;
+  height:30px;
+  border-radius:50%;
+  border:2px solid white;
+  transition:all 0.5s ease;
+}
+
+.topUI{
+  display:flex;
+  justify-content:center;
+  gap:10px;
+  margin-top:10px;
+}
+
+.bar{
+  width:100px;
+  height:10px;
+  background:#111;
+  border:1px solid cyan;
+}
+
+.fill{
+  height:100%;
+  background:cyan;
+}
+
+.controls{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  gap:10px;
+  margin-top:10px;
+}
+
+#modal, #winScreen{
+  position:fixed;
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-50%);
+  background:#222;
+  color:white;
+  padding:20px;
+  border-radius:15px;
+  box-shadow:0 0 30px cyan;
+  z-index:10;
+}
+
+.card{
+  text-align:center;
+  font-size:18px;
+}
+
+.winScreen{
+  font-size:30px;
+}
