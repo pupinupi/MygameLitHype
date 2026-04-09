@@ -2,76 +2,77 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<title>Литвин. Путь к хайпу - Лобби</title>
+<title>Лобби</title>
 <link rel="stylesheet" href="style.css">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
+
 <body>
 
-<div class="lobby-bg">
-  <h1 class="glow">🔥 Литвин. Путь к хайпу 🔥</h1>
+<h1 class="title">🔥 Литвин. Путь к хайпу 🔥</h1>
 
-  <div class="lobby-container">
-    <div class="inputs">
-      <input id="name" placeholder="Введите имя" autocomplete="off">
-      
-      <input id="room" placeholder="Код комнаты" autocomplete="off">
+<div class="container">
 
-      <div class="tokens">
-        <div class="token yellow" onclick="pick('yellow')"></div>
-        <div class="token red" onclick="pick('red')"></div>
-        <div class="token blue" onclick="pick('blue')"></div>
-        <div class="token purple" onclick="pick('purple')"></div>
-      </div>
+  <input id="name" placeholder="Имя">
+  <input id="room" placeholder="Код комнаты">
 
-      <button id="joinBtn" disabled>Войти</button>
-    </div>
-
-    <div class="rules">
-      <h2>Правила игры</h2>
-      <p>Цель игры: первым набрать 70 хайпа.</p>
-      <ul>
-        <li>2-4 игрока</li>
-        <li>Каждый ход бросает кубик</li>
-        <li>Двигается по полю и выполняет действие клетки</li>
-        <li>Скандал и Риск уменьшают или увеличивают хайп</li>
-        <li>Хайп не может быть меньше 0</li>
-      </ul>
-    </div>
-
-    <div class="players-list">
-      <h2>Игроки в комнате:</h2>
-      <div id="players"></div>
-    </div>
+  <div class="tokens">
+    <div class="token yellow" onclick="pick('yellow')"></div>
+    <div class="token red" onclick="pick('red')"></div>
+    <div class="token blue" onclick="pick('blue')"></div>
+    <div class="token purple" onclick="pick('purple')"></div>
   </div>
+
+  <button id="joinBtn" disabled>Войти</button>
+
+  <div class="playersBox">
+    <h3>Игроки:</h3>
+    <div id="players"></div>
+  </div>
+
+  <button id="startBtn" class="start hidden">🚀 Начать игру</button>
+
+  <div class="rules">
+    <h3>Правила</h3>
+    <p>Цель: 70 хайпа</p>
+    <p>Кубик → движение → действие клетки</p>
+    <p>Скандал и риск влияют на хайп</p>
+    <p>Хайп ≥ 70 = победа</p>
+  </div>
+
 </div>
 
 <script src="/socket.io/socket.io.js"></script>
+
 <script>
 const socket = io();
+
 let token = null;
+let isHost = false;
 
 const nameInput = document.getElementById('name');
 const roomInput = document.getElementById('room');
 const joinBtn = document.getElementById('joinBtn');
-const playersDiv = document.getElementById('players');
+const startBtn = document.getElementById('startBtn');
 
 function pick(t){
   token = t;
   document.querySelectorAll('.token').forEach(el=>el.classList.remove('active'));
   document.querySelector('.'+t).classList.add('active');
-  updateJoinBtn();
+  check();
 }
 
-function updateJoinBtn(){
-  joinBtn.disabled = !(nameInput.value.trim() && roomInput.value.trim() && token);
+function check(){
+  joinBtn.disabled = !(nameInput.value && roomInput.value && token);
 }
 
-nameInput.addEventListener('input', updateJoinBtn);
-roomInput.addEventListener('input', updateJoinBtn);
+nameInput.oninput = check;
+roomInput.oninput = check;
 
 joinBtn.onclick = ()=>{
-  const name = nameInput.value.trim();
-  const room = roomInput.value.trim();
+  const name = nameInput.value;
+  const room = roomInput.value;
+
   localStorage.setItem('name', name);
   localStorage.setItem('room', room);
   localStorage.setItem('token', token);
@@ -80,12 +81,25 @@ joinBtn.onclick = ()=>{
 };
 
 socket.on('players', list=>{
-  playersDiv.innerHTML = list.map(p=>`<div class="player">${p.name} (${p.token})</div>`).join('');
+  document.getElementById('players').innerHTML =
+    list.map(p=>`<div>${p.name}</div>`).join('');
+
+  // первый игрок — хост
+  if(list[0].id === socket.id){
+    isHost = true;
+    startBtn.classList.remove('hidden');
+  }
 });
+
+startBtn.onclick = ()=>{
+  const room = localStorage.getItem('room');
+  socket.emit('startGame', room);
+};
 
 socket.on('startGame', ()=>{
   window.location = "game.html";
 });
 </script>
+
 </body>
 </html>
