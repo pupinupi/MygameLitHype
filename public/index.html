@@ -1,55 +1,36 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html>
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Лобби - Литвин. Путь к хайпу</title>
 <link rel="stylesheet" href="style.css">
 </head>
+
 <body class="lobby">
 
-<h1 class="title">🔥 Литвин. Путь к хайпу 🔥</h1>
+<h1>🔥 Литвин. Путь к хайпу 🔥</h1>
 
-<div class="container">
+<input id="name" placeholder="Имя">
+<input id="room" placeholder="Комната">
 
-  <input id="name" placeholder="Имя">
-  <input id="room" placeholder="Код комнаты">
-
-  <!-- Выбор фишки -->
-  <div class="tokens">
-    <div class="tokenSelect red" data-color="red"></div>
-    <div class="tokenSelect yellow" data-color="yellow"></div>
-    <div class="tokenSelect blue" data-color="blue"></div>
-    <div class="tokenSelect purple" data-color="purple"></div>
-  </div>
-
-  <button id="joinBtn">Войти</button>
-
-  <!-- Игроки -->
-  <div class="playersBox">
-    <h3>Игроки:</h3>
-    <div id="players"></div>
-  </div>
-
-  <button id="startBtn" class="startBtn hidden">🚀 Начать игру</button>
-
-  <div class="rules">
-    <h3>Правила</h3>
-    <p>Цель: набрать 70 хайпа</p>
-    <p>Бросай кубик → двигайся → выполняй клетку</p>
-    <p>Скандал и риск могут уменьшить хайп</p>
-  </div>
-
+<div class="tokens">
+  <div class="tokenSelect red" data-color="red"></div>
+  <div class="tokenSelect yellow" data-color="yellow"></div>
+  <div class="tokenSelect blue" data-color="blue"></div>
+  <div class="tokenSelect purple" data-color="purple"></div>
 </div>
 
+<button id="joinBtn">Войти</button>
+
+<div id="players"></div>
+
+<button id="startBtn" class="hidden">Начать игру</button>
+
 <script src="/socket.io/socket.io.js"></script>
+
 <script>
 const socket = io();
-
 let selected = null;
-let isHost = false;
 
-// Выбор фишки
 document.querySelectorAll(".tokenSelect").forEach(t=>{
   t.onclick = ()=>{
     document.querySelectorAll(".tokenSelect").forEach(el=>el.classList.remove("active"));
@@ -58,45 +39,32 @@ document.querySelectorAll(".tokenSelect").forEach(t=>{
   };
 });
 
-// Вход
 document.getElementById("joinBtn").onclick = ()=>{
   const name = document.getElementById("name").value;
   const room = document.getElementById("room").value;
 
-  if(!name || !room || !selected){
-    alert("Заполни всё и выбери фишку");
-    return;
-  }
-
+  localStorage.setItem("name", name);
   localStorage.setItem("room", room);
   localStorage.setItem("token", selected);
-  localStorage.setItem("name", name);
 
-  socket.emit("join", {
-    name,
-    room,
-    token: selected
-  });
+  socket.emit("join", {name, room, token:selected});
 };
 
-// Список игроков
 socket.on("players", players=>{
   document.getElementById("players").innerHTML =
-    players.map(p=>`<div>${p.name} (${p.token})</div>`).join("");
+    players.map(p=>p.name+" ("+p.token+")").join("<br>");
 
   if(players[0].id === socket.id){
-    isHost = true;
     document.getElementById("startBtn").classList.remove("hidden");
   }
 });
 
-// Старт игры
 document.getElementById("startBtn").onclick = ()=>{
   socket.emit("startGame");
 };
 
 socket.on("startGame", ()=>{
-  window.location.href = "game.html";
+  window.location.href="game.html";
 });
 </script>
 
