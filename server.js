@@ -14,13 +14,10 @@ io.on('connection', socket => {
     socket.room = room;
 
     if(!rooms[room]){
-      rooms[room] = {
-        players: [],
-        turn: 0
-      };
+      rooms[room] = { players: [], turn: 0 };
     }
 
-    // ❗ Удаляем старого игрока если был
+    // удаляем старого игрока (если перезашёл)
     rooms[room].players = rooms[room].players.filter(p => p.name !== name);
 
     const player = {
@@ -35,7 +32,7 @@ io.on('connection', socket => {
     rooms[room].players.push(player);
 
     io.to(room).emit('players', rooms[room].players);
-    io.to(room).emit('update', rooms[room]); // 💥 ВАЖНО
+    io.to(room).emit('update', rooms[room]);
   });
 
   socket.on('startGame', ()=>{
@@ -83,10 +80,7 @@ function handleCell(game, player){
     "start","+1","+2","scandal","+2","risk","+2","scandal","+3","+5",
     "-8","-15skip","+3","risk","+3","skip","+2","scandal","+8","-10","+4"
   ];
-if(cell.includes("skip")){
-  player.skip = true;
-  io.to(player.id).emit("skipNotice");
-}
+
   const cell = cells[player.position];
 
   if(cell.includes("+")) player.hype += parseInt(cell);
@@ -120,6 +114,7 @@ if(cell.includes("skip")){
 
   if(cell.includes("skip")){
     player.skip = true;
+    io.to(player.id).emit("skipNotice");
   }
 
   if(player.hype < 0) player.hype = 0;
