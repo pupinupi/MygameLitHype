@@ -1,28 +1,25 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <title>Литвин: Путь к хайпу</title>
-  <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
 <div id="game-container">
 
-  <!-- 🔥 ШКАЛЫ -->
-  <div id="hype-bars"></div>
+<div id="hype-bars"></div>
 
-  <!-- 💡 ПОЛЕ -->
-  <div class="board-wrapper">
-    <canvas id="gameCanvas" width="1024" height="1024"></canvas>
-  </div>
-  <div id="overlay" class="hidden"></div>
+<div class="board-wrapper">
+<canvas id="gameCanvas" width="1024" height="1024"></canvas>
+</div>
 
-  <!-- 🎲 КНОПКА -->
-  <button id="rollButton">🎲 Бросить кубик</button>
+<button id="rollButton">🎲 Бросить кубик</button>
 
 </div>
+
+<div id="overlay" class="hidden"></div>
 
 <script src="/socket.io/socket.io.js"></script>
 <script src="client.js"></script>
