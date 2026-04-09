@@ -9,10 +9,9 @@ let rooms = {};
 
 io.on('connection', socket => {
 
-  // 🔹 ВХОД В КОМНАТУ
   socket.on('join', ({name, room, token})=>{
     socket.join(room);
-    socket.room = room; // 💥 ВАЖНО
+    socket.room = room;
 
     if(!rooms[room]){
       rooms[room] = {
@@ -35,7 +34,6 @@ io.on('connection', socket => {
     io.to(room).emit('players', rooms[room].players);
   });
 
-  // 🔥 СТАРТ ИГРЫ (ИСПРАВЛЕНО)
   socket.on('startGame', ()=>{
     const room = socket.room;
     if(!room) return;
@@ -43,11 +41,9 @@ io.on('connection', socket => {
     io.to(room).emit('startGame');
   });
 
-  // 🎲 КУБИК
   socket.on('rollDice', ()=>{
     const room = socket.room;
     const game = rooms[room];
-
     if(!game) return;
 
     const player = game.players[game.turn];
@@ -80,8 +76,6 @@ io.on('connection', socket => {
 
 });
 
-
-// 🔹 ЛОГИКА КЛЕТОК
 function handleCell(game, player){
 
   const cells = [
@@ -91,16 +85,9 @@ function handleCell(game, player){
 
   const cell = cells[player.position];
 
-  // ➕➖ ХАЙП
-  if(cell.includes("+")){
-    player.hype += parseInt(cell);
-  }
+  if(cell.includes("+")) player.hype += parseInt(cell);
+  if(cell.includes("-")) player.hype += parseInt(cell);
 
-  if(cell.includes("-")){
-    player.hype += parseInt(cell);
-  }
-
-  // 🔥 СКАНДАЛ
   if(cell === "scandal"){
     const rand = Math.floor(Math.random()*7);
 
@@ -109,35 +96,28 @@ function handleCell(game, player){
 
     if(e === "all-3"){
       game.players.forEach(p=>{
-        p.hype -= 3;
+        p.hype -=3;
         if(p.hype < 0) p.hype = 0;
       });
-    } 
-    else if(e === "-5skip"){
+    } else if(e === "-5skip"){
       player.hype -=5;
       player.skip = true;
-    } 
-    else {
+    } else {
       player.hype += e;
     }
 
     io.to(player.id).emit('scandal', rand);
   }
 
-  // ⚠️ РИСК
   if(cell === "risk"){
     const roll = Math.floor(Math.random()*6)+1;
 
-    if(roll <=3){
-      player.hype -=5;
-    } else {
-      player.hype +=5;
-    }
+    if(roll <=3) player.hype -=5;
+    else player.hype +=5;
 
     io.to(player.id).emit('risk', roll);
   }
 
-  // ⛔ ПРОПУСК
   if(cell === "skip"){
     player.skip = true;
   }
