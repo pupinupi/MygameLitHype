@@ -114,3 +114,32 @@ button{
   box-shadow:0 0 15px white;
   transform:scale(1.2);
 }
+
+.lobby{
+  background:black;
+  color:white;
+  text-align:center;
+}
+
+.tokens{
+  margin:10px;
+}
+
+.tokenSelect{
+  width:40px;
+  height:40px;
+  border-radius:50%;
+  display:inline-block;
+  margin:5px;
+  border:2px solid white;
+}
+
+.tokenSelect.active{
+  box-shadow:0 0 15px cyan;
+  transform:scale(1.2);
+}
+
+.red{background:red;}
+.yellow{background:yellow;}
+.blue{background:cyan;}
+.purple{background:purple;}
