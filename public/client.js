@@ -78,6 +78,10 @@ socket.on("update", game=>{
   draw();
 });
 
+socket.on("skipNotice", ()=>{
+  showSkip();
+});
+
 // 🎲 кубик
 rollButton.onclick = ()=>{
   socket.emit("rollDice");
