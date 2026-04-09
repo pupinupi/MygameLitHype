@@ -1,116 +1,105 @@
 const socket = io();
 
-// UI
-const rollBtn = document.getElementById("rollBtn");
-const diceText = document.getElementById("diceText");
-const tokensDiv = document.getElementById("tokens");
-const topUI = document.getElementById("topUI");
-const modal = document.getElementById("modal");
-const winScreen = document.getElementById("winScreen");
-const diceSound = document.getElementById("diceSound");
-const scandalSound = document.getElementById("scandalSound");
+// Canvas и контекст
+const canvas = document.getElementById("gameCanvas");
+const ctx = canvas.getContext("2d");
+
+// Кнопка броска кубика
+const rollButton = document.getElementById("rollButton");
+
+// Изображение поля
+const boardImg = new Image();
+boardImg.src = 'board.jpg';
 
 // Массив координат клеток (20 клеток)
 const cells = [
-  {x:90,y:600}, {x:90,y:500}, {x:90,y:400}, {x:90,y:300}, {x:90,y:200},
-  {x:200,y:150}, {x:320,y:140}, {x:450,y:140}, {x:580,y:140}, {x:720,y:140},
-  {x:860,y:150}, {x:900,y:260}, {x:900,y:380}, {x:900,y:500}, {x:900,y:600},
-  {x:780,y:650}, {x:650,y:660}, {x:520,y:660}, {x:380,y:650}, {x:250,y:640}
+  {x: 50, y: 700}, {x: 150, y: 700}, {x: 250, y: 700}, {x: 350, y: 700}, {x: 450, y: 700},
+  {x: 550, y: 700}, {x: 650, y: 700}, {x: 750, y: 700}, {x: 750, y: 600}, {x: 750, y: 500},
+  {x: 750, y: 400}, {x: 750, y: 300}, {x: 650, y: 300}, {x: 550, y: 300}, {x: 450, y: 300},
+  {x: 350, y: 300}, {x: 250, y: 300}, {x: 150, y: 300}, {x: 50, y: 300}, {x: 50, y: 400}
 ];
 
-// Отправка броска кубика
-rollBtn.onclick = ()=>{
-  diceSound.play();
-  socket.emit("rollDice", localStorage.getItem("room"));
+// Игроки
+let players = [];
+let currentTurn = 0;
+
+// Загрузка фишек
+const tokenColors = {
+  red: 'red',
+  yellow: 'yellow',
+  blue: 'blue',
+  purple: 'purple'
 };
 
-// Результат кубика
-socket.on("dice", n=>{
-  diceText.innerText = "Выпало: " + n;
-});
+// Функция отрисовки
+function drawGame(){
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.drawImage(boardImg, 0, 0, canvas.width, canvas.height);
 
-// Обновление игроков
-socket.on("update", game=>{
-  drawPlayers(game.players);
-  drawHype(game.players);
-
-  const current = game.players[game.turn];
-  rollBtn.disabled = current.id !== socket.id;
-});
-
-// Масштаб
-function getScale(){
-  const board = document.querySelector(".board");
-  return board.clientWidth / 1024;
-}
-
-// Отрисовка фишек
-function drawPlayers(players){
-  tokensDiv.innerHTML = "";
-  const scale = getScale();
-  players.forEach((p,i)=>{
-    const el = document.createElement("div");
-    el.className = "token " + p.token;
-    const pos = cells[p.position];
-    if(!pos) return;
-    el.style.left = (pos.x * scale + i*8) + "px";
-    el.style.top = (pos.y * scale + i*8) + "px";
-    tokensDiv.appendChild(el);
+  // Отрисовка фишек
+  players.forEach((p, idx)=>{
+    const cell = cells[p.position];
+    ctx.fillStyle = tokenColors[p.token] || 'white';
+    ctx.beginPath();
+    ctx.arc(cell.x, cell.y, 20, 0, Math.PI*2);
+    ctx.fill();
+    ctx.strokeStyle = 'black';
+    ctx.stroke();
   });
+
+  // Шкалы хайпа
+  updateHypeBars();
 }
 
-// Шкала хайпа
-function drawHype(players){
-  topUI.innerHTML = "";
+// Шкалы хайпа
+function updateHypeBars(){
+  const container = document.getElementById("hype-bars");
+  container.innerHTML = '';
   players.forEach(p=>{
-    const div = document.createElement("div");
-    div.innerHTML = `
-      <div>${p.name} (${p.hype})</div>
-      <div class="bar">
-        <div class="fill" style="width:${Math.min(p.hype,70)/70*100}%"></div>
-      </div>
-    `;
-    topUI.appendChild(div);
+    const bar = document.createElement('div');
+    bar.style.margin = '5px';
+    bar.style.width = '200px';
+    bar.style.height = '20px';
+    bar.style.background = '#333';
+    bar.style.border = '2px solid #fff';
+    const fill = document.createElement('div');
+    fill.style.width = Math.min(p.hype,70)/70*100 + '%';
+    fill.style.height = '100%';
+    fill.style.background = tokenColors[p.token] || 'white';
+    bar.appendChild(fill);
+    container.appendChild(bar);
   });
 }
 
-// Скандал
-socket.on("scandal", i=>{
-  scandalSound.play();
-  const texts = [
-    "🔥 перегрел аудиторию (-1)",
-    "🫣 громкий заголовок (-2)",
-    "😱 это монтаж (-3)",
-    "#️⃣ взлом (-3 всем)",
-    "😮 в шоке (-4)",
-    "🤫 удаляй (-5)",
-    "🙄 контент (-5 + пропуск)"
-  ];
-  modal.innerHTML = `<div class="card">${texts[i]}</div>`;
-  modal.classList.remove("hidden");
-  setTimeout(()=>{modal.classList.add("hidden");},3000);
+// Обновление состояния игроков с сервера
+socket.on('update', game=>{
+  players = game.players;
+  currentTurn = game.turn;
+  drawGame();
 });
 
-// Риск
-socket.on("risk", roll=>{
-  const text = roll <=3 ? "−5 хайпа 😬" : "+5 хайпа 🚀";
-  modal.innerHTML = `<div class="card">🎲 Риск<br>Выпало: ${roll}<br>${text}</div>`;
-  modal.classList.remove("hidden");
-  setTimeout(()=>{modal.classList.add("hidden");},3000);
+// После броска кубика показываем roll
+socket.on('dice', roll=>{
+  console.log('Кубик:', roll);
 });
 
 // Победа
-socket.on("win", player=>{
-  winScreen.innerHTML = `🏆 ${player.name} Победа! (${player.hype})`;
-  winScreen.classList.remove("hidden");
+socket.on('win', player=>{
+  alert(`${player.name} победил!`);
 });
 
-// Клик по полю для координат
-const board = document.getElementById("board");
-board.addEventListener("click", (e)=>{
-  const rect = board.getBoundingClientRect();
-  const scale = getScale();
-  const x = Math.round((e.clientX - rect.left)/scale);
-  const y = Math.round((e.clientY - rect.top)/scale);
-  console.log(`{x:${x}, y:${y}},`);
+// Кнопка броска кубика
+rollButton.addEventListener('click', ()=>{
+  const myPlayer = players.find(p=>p.id === socket.id);
+  if(!myPlayer) return;
+  if(currentTurn !== players.indexOf(myPlayer)) return alert("Сейчас ход другого игрока!");
+  socket.emit('rollDice', 'room1');
 });
+
+// Отрисовка после загрузки поля
+boardImg.onload = drawGame;
+
+// Подключение к комнате
+const name = prompt("Введите имя");
+const token = prompt("Выберите цвет фишки (red, yellow, blue, purple)");
+socket.emit('join', {name, room: 'room1', token});
