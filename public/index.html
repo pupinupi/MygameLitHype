@@ -1,50 +1,91 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>Литвин. Путь к хайпу - Лобби</title>
+<link rel="stylesheet" href="style.css">
+</head>
 <body>
 
-<h1 class="glow">🔥 Литвин. Путь к хайпу 🔥</h1>
+<div class="lobby-bg">
+  <h1 class="glow">🔥 Литвин. Путь к хайпу 🔥</h1>
 
-<input id="name" placeholder="Имя">
-<input id="room" placeholder="Код комнаты">
+  <div class="lobby-container">
+    <div class="inputs">
+      <input id="name" placeholder="Введите имя" autocomplete="off">
+      
+      <input id="room" placeholder="Код комнаты" autocomplete="off">
 
-<div class="tokens">
-  <div class="token yellow" onclick="pick('yellow')"></div>
-  <div class="token red" onclick="pick('red')"></div>
-  <div class="token blue" onclick="pick('blue')"></div>
-  <div class="token purple" onclick="pick('purple')"></div>
+      <div class="tokens">
+        <div class="token yellow" onclick="pick('yellow')"></div>
+        <div class="token red" onclick="pick('red')"></div>
+        <div class="token blue" onclick="pick('blue')"></div>
+        <div class="token purple" onclick="pick('purple')"></div>
+      </div>
+
+      <button id="joinBtn" disabled>Войти</button>
+    </div>
+
+    <div class="rules">
+      <h2>Правила игры</h2>
+      <p>Цель игры: первым набрать 70 хайпа.</p>
+      <ul>
+        <li>2-4 игрока</li>
+        <li>Каждый ход бросает кубик</li>
+        <li>Двигается по полю и выполняет действие клетки</li>
+        <li>Скандал и Риск уменьшают или увеличивают хайп</li>
+        <li>Хайп не может быть меньше 0</li>
+      </ul>
+    </div>
+
+    <div class="players-list">
+      <h2>Игроки в комнате:</h2>
+      <div id="players"></div>
+    </div>
+  </div>
 </div>
-
-<button onclick="join()">Войти</button>
-
-<div id="players"></div>
 
 <script src="/socket.io/socket.io.js"></script>
 <script>
 const socket = io();
-let token;
+let token = null;
+
+const nameInput = document.getElementById('name');
+const roomInput = document.getElementById('room');
+const joinBtn = document.getElementById('joinBtn');
+const playersDiv = document.getElementById('players');
 
 function pick(t){
   token = t;
   document.querySelectorAll('.token').forEach(el=>el.classList.remove('active'));
   document.querySelector('.'+t).classList.add('active');
+  updateJoinBtn();
 }
 
-function join(){
-  const name = nameInput.value;
-  const room = roomInput.value;
+function updateJoinBtn(){
+  joinBtn.disabled = !(nameInput.value.trim() && roomInput.value.trim() && token);
+}
 
+nameInput.addEventListener('input', updateJoinBtn);
+roomInput.addEventListener('input', updateJoinBtn);
+
+joinBtn.onclick = ()=>{
+  const name = nameInput.value.trim();
+  const room = roomInput.value.trim();
   localStorage.setItem('name', name);
   localStorage.setItem('room', room);
   localStorage.setItem('token', token);
 
   socket.emit('join',{name,room,token});
-}
+};
 
-socket.on('players', p=>{
-  players.innerHTML = p.map(x=>x.name).join("<br>");
+socket.on('players', list=>{
+  playersDiv.innerHTML = list.map(p=>`<div class="player">${p.name} (${p.token})</div>`).join('');
 });
 
 socket.on('startGame', ()=>{
   window.location = "game.html";
 });
 </script>
-
 </body>
+</html>
