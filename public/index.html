@@ -91,6 +91,17 @@ socket.on('players', list=>{
   }
 });
 
+  const tokens = document.querySelectorAll(".tokenSelect");
+
+tokens.forEach(t=>{
+  t.onclick = ()=>{
+    tokens.forEach(el=>el.classList.remove("active"));
+    t.classList.add("active");
+
+    localStorage.setItem("token", t.dataset.color);
+  };
+});
+
 startBtn.onclick = ()=>{
   const room = localStorage.getItem('room');
   socket.emit('startGame', room);
