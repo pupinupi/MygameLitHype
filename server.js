@@ -20,6 +20,9 @@ io.on('connection', socket => {
       };
     }
 
+    // ❗ Удаляем старого игрока если был
+    rooms[room].players = rooms[room].players.filter(p => p.name !== name);
+
     const player = {
       id: socket.id,
       name,
@@ -32,13 +35,13 @@ io.on('connection', socket => {
     rooms[room].players.push(player);
 
     io.to(room).emit('players', rooms[room].players);
+    io.to(room).emit('update', rooms[room]); // 💥 ВАЖНО
   });
 
   socket.on('startGame', ()=>{
-    const room = socket.room;
-    if(!room) return;
-
-    io.to(room).emit('startGame');
+    if(socket.room){
+      io.to(socket.room).emit('startGame');
+    }
   });
 
   socket.on('rollDice', ()=>{
@@ -58,7 +61,6 @@ io.on('connection', socket => {
     }
 
     const roll = Math.floor(Math.random()*6)+1;
-
     player.position = (player.position + roll) % 20;
 
     handleCell(game, player);
@@ -77,7 +79,6 @@ io.on('connection', socket => {
 });
 
 function handleCell(game, player){
-
   const cells = [
     "start","+1","+2","scandal","+2","risk","+2","scandal","+3","+5",
     "-8","-15skip","+3","risk","+3","skip","+2","scandal","+8","-10","+4"
@@ -90,7 +91,6 @@ function handleCell(game, player){
 
   if(cell === "scandal"){
     const rand = Math.floor(Math.random()*7);
-
     const effects = [-1,-2,-3,"all-3",-4,-5,"-5skip"];
     const e = effects[rand];
 
@@ -111,14 +111,11 @@ function handleCell(game, player){
 
   if(cell === "risk"){
     const roll = Math.floor(Math.random()*6)+1;
-
-    if(roll <=3) player.hype -=5;
-    else player.hype +=5;
-
+    player.hype += roll <=3 ? -5 : 5;
     io.to(player.id).emit('risk', roll);
   }
 
-  if(cell === "skip"){
+  if(cell.includes("skip")){
     player.skip = true;
   }
 
