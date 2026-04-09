@@ -1,12 +1,11 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta charset="UTF-8">
-<title>Лобби</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Лобби - Литвин. Путь к хайпу</title>
 <link rel="stylesheet" href="style.css">
 </head>
-
 <body class="lobby">
 
 <h1 class="title">🔥 Литвин. Путь к хайпу 🔥</h1>
@@ -16,7 +15,7 @@
   <input id="name" placeholder="Имя">
   <input id="room" placeholder="Код комнаты">
 
-  <!-- 🎨 ВЫБОР ФИШКИ -->
+  <!-- Выбор фишки -->
   <div class="tokens">
     <div class="tokenSelect red" data-color="red"></div>
     <div class="tokenSelect yellow" data-color="yellow"></div>
@@ -26,7 +25,7 @@
 
   <button id="joinBtn">Войти</button>
 
-  <!-- 👥 ИГРОКИ -->
+  <!-- Игроки -->
   <div class="playersBox">
     <h3>Игроки:</h3>
     <div id="players"></div>
@@ -34,7 +33,6 @@
 
   <button id="startBtn" class="startBtn hidden">🚀 Начать игру</button>
 
-  <!-- 📜 ПРАВИЛА -->
   <div class="rules">
     <h3>Правила</h3>
     <p>Цель: набрать 70 хайпа</p>
@@ -45,14 +43,13 @@
 </div>
 
 <script src="/socket.io/socket.io.js"></script>
-
 <script>
 const socket = io();
 
 let selected = null;
 let isHost = false;
 
-// 🎨 выбор фишки
+// Выбор фишки
 document.querySelectorAll(".tokenSelect").forEach(t=>{
   t.onclick = ()=>{
     document.querySelectorAll(".tokenSelect").forEach(el=>el.classList.remove("active"));
@@ -61,7 +58,7 @@ document.querySelectorAll(".tokenSelect").forEach(t=>{
   };
 });
 
-// 🚪 вход
+// Вход
 document.getElementById("joinBtn").onclick = ()=>{
   const name = document.getElementById("name").value;
   const room = document.getElementById("room").value;
@@ -72,6 +69,8 @@ document.getElementById("joinBtn").onclick = ()=>{
   }
 
   localStorage.setItem("room", room);
+  localStorage.setItem("token", selected);
+  localStorage.setItem("name", name);
 
   socket.emit("join", {
     name,
@@ -80,24 +79,22 @@ document.getElementById("joinBtn").onclick = ()=>{
   });
 };
 
-// 👥 список игроков
+// Список игроков
 socket.on("players", players=>{
   document.getElementById("players").innerHTML =
     players.map(p=>`<div>${p.name} (${p.token})</div>`).join("");
 
-  // первый игрок = хост
   if(players[0].id === socket.id){
     isHost = true;
     document.getElementById("startBtn").classList.remove("hidden");
   }
 });
 
-// 🚀 старт
+// Старт игры
 document.getElementById("startBtn").onclick = ()=>{
   socket.emit("startGame");
 };
 
-// ▶️ переход в игру
 socket.on("startGame", ()=>{
   window.location.href = "game.html";
 });
