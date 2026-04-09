@@ -50,6 +50,10 @@ io.on('connection', socket => {
       return;
     }
 
+socket.on('startGame', room=>{
+  io.to(room).emit('startGame');
+});
+    
     const roll = Math.floor(Math.random()*6)+1;
     player.position = (player.position + roll) % 20;
 
@@ -122,3 +126,5 @@ function handleCell(game, player){
 }
 
 server.listen(3000, ()=>console.log("Server running"));
+
+
