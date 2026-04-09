@@ -1,33 +1,22 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Игра - Литвин. Путь к хайпу</title>
-<link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <title>Литвин: Путь к хайпу</title>
+  <link rel="stylesheet" href="style.css">
 </head>
-<body class="game">
+<body>
+  <div id="game-container">
+    <canvas id="gameCanvas" width="800" height="800"></canvas>
+    
+    <!-- Шкалы хайпа -->
+    <div id="hype-bars"></div>
 
-<div class="topUI" id="topUI"></div>
+    <!-- Кнопка броска кубика -->
+    <button id="rollButton">🎲 Бросить кубик</button>
+  </div>
 
-<div class="boardContainer">
-  <img src="board.jpg" class="board" id="board">
-  <div id="tokens"></div>
-</div>
-
-<div class="controls">
-  <button id="rollBtn">🎲 Бросить кубик</button>
-  <div id="diceText"></div>
-</div>
-
-<div id="modal" class="hidden"></div>
-<div id="winScreen" class="hidden"></div>
-
-<audio id="diceSound" src="dice.mp3"></audio>
-<audio id="scandalSound" src="scandal.mp3"></audio>
-
-<script src="/socket.io/socket.io.js"></script>
-<script src="client.js"></script>
-
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="client.js"></script>
 </body>
 </html>
