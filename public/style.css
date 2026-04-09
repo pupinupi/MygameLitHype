@@ -70,3 +70,64 @@ body{
 #hype-bars div{
   margin:5px 0;
 }
+
+/* 💥 OVERLAY */
+#overlay{
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  background:rgba(0,0,0,0.7);
+  z-index:1000;
+}
+
+/* ❌ скрытие */
+.hidden{
+  display:none;
+}
+
+/* 🔥 КАРТОЧКА */
+.card{
+  padding:30px;
+  border-radius:20px;
+  font-size:22px;
+  text-align:center;
+  max-width:300px;
+  animation:pop 0.3s ease;
+}
+
+/* 💥 скандал */
+.scandal{
+  background:#1a0000;
+  color:#ff4d4d;
+  box-shadow:
+    0 0 20px red,
+    0 0 40px crimson;
+}
+
+/* 🎲 риск */
+.risk{
+  background:#001a1a;
+  color:#00ffff;
+  box-shadow:
+    0 0 20px cyan,
+    0 0 40px blue;
+}
+
+/* ⚖️ суд */
+.skip{
+  background:#111;
+  color:orange;
+  box-shadow:
+    0 0 20px orange;
+}
+
+@keyframes pop{
+  from{transform:scale(0.7); opacity:0;}
+  to{transform:scale(1); opacity:1;}
+}
+
