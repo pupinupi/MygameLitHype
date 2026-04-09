@@ -1,296 +1,72 @@
+/* 🌌 ОБЩИЙ ФОН */
 body{
   margin:0;
   background:black;
-  color:white;
   font-family:Arial;
-}
-
-#topUI{
-  position:fixed;
-  top:0;
-  width:100%;
-  padding:10px;
-  background:#000;
-  box-shadow:0 0 20px cyan;
-}
-
-.bar{
-  height:8px;
-  background:#222;
-  margin-bottom:5px;
-}
-
-.fill{
-  height:100%;
-  background:cyan;
-}
-
-.gameWrapper{
-  margin-top:120px;
-  position:relative;
-  display:flex;
-  justify-content:center;
-}
-
-.board{
-  width:95vw;
-  max-width:500px;
-  box-shadow:0 0 30px orange;
-}
-
-#tokens{
-  position:absolute;
-  width:95vw;
-  max-width:500px;
-  height:95vw;
-  max-height:500px;
-}
-
-.token{
-  width:20px;
-  height:20px;
-  border-radius:50%;
-  position:absolute;
-}
-
-.yellow{background:yellow;}
-.red{background:red;}
-.blue{background:cyan;}
-.purple{background:purple;}
-
-.bottomUI{
-  position:fixed;
-  bottom:0;
-  width:100%;
-  text-align:center;
-  padding:15px;
-  background:#000;
-}
-
-button{
-  padding:15px;
-  font-size:18px;
-  background:orange;
-  border:none;
-  border-radius:10px;
-}
-
-.card{
-  background:#111;
-  padding:20px;
-  border:2px solid red;
-}
-
-#modal{
-  position:fixed;
-  top:40%;
-  left:50%;
-  transform:translateX(-50%);
-}
-
-#winScreen{
-  position:fixed;
-  top:40%;
-  left:50%;
-  transform:translateX(-50%);
-  font-size:30px;
-  color:gold;
-}
-
-.hidden{
-  display:none;
-}
-
-.tokenSelect{
-  width:40px;
-  height:40px;
-  border-radius:50%;
-  margin:5px;
-  display:inline-block;
-  border:2px solid white;
-}
-
-.tokenSelect.active{
-  box-shadow:0 0 15px white;
-  transform:scale(1.2);
-}
-
-.lobby{
-  background:black;
   color:white;
   text-align:center;
 }
 
-.tokens{
-  margin:10px;
-}
-
-.tokenSelect{
-  width:40px;
-  height:40px;
-  border-radius:50%;
-  display:inline-block;
-  margin:5px;
-  border:2px solid white;
-}
-
-.tokenSelect.active{
-  box-shadow:0 0 15px cyan;
-  transform:scale(1.2);
-}
-
-.red{background:red;}
-.yellow{background:yellow;}
-.blue{background:cyan;}
-.purple{background:purple;}
-
-
-body.lobby, body.game{
-  margin:0;
-  padding:0;
-  font-family:sans-serif;
-  background:black;
-  color:white;
-}
-
-.title{
-  text-align:center;
-  color:#ff6a00;
-  text-shadow:0 0 10px orange,0 0 30px red;
-  margin-top:10px;
-}
-
-.container{
+/* 🔥 КОНТЕЙНЕР */
+#game-container{
   display:flex;
   flex-direction:column;
   align-items:center;
-  gap:15px;
+  justify-content:flex-start;
+  padding-top:40px;
+  gap:20px;
 }
 
-input{
-  width:80%;
-  padding:12px;
-  border-radius:10px;
-  border:none;
-  background:#111;
-  color:white;
-  box-shadow:0 0 10px cyan;
-}
-
-.tokens{
-  display:flex;
-  gap:10px;
-}
-
-.tokenSelect{
-  width:45px;
-  height:45px;
-  border-radius:50%;
-  border:2px solid white;
-  cursor:pointer;
-}
-
-.tokenSelect.active{
-  transform:scale(1.2);
-  box-shadow:0 0 20px cyan;
-}
-
-.red{background:red;}
-.yellow{background:yellow;}
-.blue{background:cyan;}
-.purple{background:purple;}
-}
-
-.playersBox, .rules{
-  width:80%;
-  background:#111;
-  padding:10px;
-  border-radius:10px;
-  box-shadow:0 0 15px cyan;
-  text-align:left;
-}
-
-.startBtn{
-  background:linear-gradient(45deg,#00eaff,#0066ff);
-  color:white;
-  padding:10px 20px;
-  border:none;
-  border-radius:10px;
-  cursor:pointer;
-}
-
-.hidden{
-  display:none;
-}
-
-/* Игра */
-.boardContainer{
+/* 💡 НЕОНОВОЕ СВЕЧЕНИЕ ПОЛЯ */
+.board-wrapper{
   position:relative;
-  display:flex;
-  justify-content:center;
-  margin-top:20px;
+  width:90vw;
+  max-width:500px;
+  aspect-ratio:1/1;
+  
+  box-shadow:
+    0 0 20px cyan,
+    0 0 40px #00eaff,
+    0 0 80px #00eaff,
+    inset 0 0 20px orange;
+  
+  border-radius:20px;
+  overflow:hidden;
 }
 
-.board{
-  width:80%;
-  max-width:1024px;
-  border:2px solid cyan;
-}
-
-#tokens .token{
-  position:absolute;
-  width:30px;
-  height:30px;
-  border-radius:50%;
-  border:2px solid white;
-  transition:all 0.5s ease;
-}
-
-.topUI{
-  display:flex;
-  justify-content:center;
-  gap:10px;
-  margin-top:10px;
-}
-
-.bar{
-  width:100px;
-  height:10px;
-  background:#111;
-  border:1px solid cyan;
-}
-
-.fill{
+/* 🎮 CANVAS */
+#gameCanvas{
+  width:100%;
   height:100%;
-  background:cyan;
+  display:block;
 }
 
-.controls{
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  gap:10px;
+/* 🎲 КНОПКА */
+#rollButton{
   margin-top:10px;
-}
-
-#modal, #winScreen{
-  position:fixed;
-  top:50%;
-  left:50%;
-  transform:translate(-50%,-50%);
-  background:#222;
-  color:white;
-  padding:20px;
+  padding:18px 30px;
+  font-size:20px;
+  border:none;
   border-radius:15px;
-  box-shadow:0 0 30px cyan;
-  z-index:10;
+  background:linear-gradient(45deg, orange, red);
+  color:white;
+  cursor:pointer;
+
+  box-shadow:
+    0 0 10px orange,
+    0 0 20px red;
 }
 
-.card{
-  text-align:center;
-  font-size:18px;
+#rollButton:active{
+  transform:scale(0.95);
 }
 
-.winScreen{
-  font-size:30px;
+/* 🔥 ШКАЛА ХАЙПА */
+#hype-bars{
+  width:90%;
+  max-width:500px;
+}
+
+#hype-bars div{
+  margin:5px 0;
 }
