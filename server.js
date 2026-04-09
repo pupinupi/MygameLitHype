@@ -83,7 +83,10 @@ function handleCell(game, player){
     "start","+1","+2","scandal","+2","risk","+2","scandal","+3","+5",
     "-8","-15skip","+3","risk","+3","skip","+2","scandal","+8","-10","+4"
   ];
-
+if(cell.includes("skip")){
+  player.skip = true;
+  io.to(player.id).emit("skipNotice");
+}
   const cell = cells[player.position];
 
   if(cell.includes("+")) player.hype += parseInt(cell);
