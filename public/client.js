@@ -95,3 +95,16 @@ socket.on("win", player=>{
   winScreen.innerHTML = `🏆 ${player.name} победил!`;
   winScreen.classList.remove("hidden");
 });
+
+const board = document.querySelector(".board");
+
+board.addEventListener("click", (e)=>{
+  const rect = board.getBoundingClientRect();
+
+  const scale = board.clientWidth / 1024;
+
+  const x = Math.round((e.clientX - rect.left) / scale);
+  const y = Math.round((e.clientY - rect.top) / scale);
+
+  console.log(`{x:${x}, y:${y}},`);
+});
