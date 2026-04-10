@@ -1,133 +1,81 @@
-/* 🌌 ОБЩИЙ ФОН */
 body{
   margin:0;
-  background:black;
   font-family:Arial;
+  background: radial-gradient(circle, #0a0a0a, #000);
   color:white;
   text-align:center;
 }
 
-/* 🔥 КОНТЕЙНЕР */
-#game-container{
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:flex-start;
-  padding-top:40px;
-  gap:20px;
+/* заголовок */
+.title{
+  margin-top:30px;
+  font-size:32px;
+  color:#00eaff;
+  text-shadow:0 0 20px cyan;
 }
 
-/* 💡 НЕОНОВОЕ СВЕЧЕНИЕ ПОЛЯ */
-.board-wrapper{
-  position:relative;
-  width:90vw;
-  max-width:500px;
-  aspect-ratio:1/1;
-  
-  box-shadow:
-    0 0 20px cyan,
-    0 0 40px #00eaff,
-    0 0 80px #00eaff,
-    inset 0 0 20px orange;
-  
+/* контейнер */
+.container{
+  margin:20px auto;
+  padding:20px;
+  width:300px;
+  background:#111;
   border-radius:20px;
-  overflow:hidden;
+  box-shadow:0 0 30px #00eaff;
 }
 
-/* 🎮 CANVAS */
-#gameCanvas{
-  width:100%;
-  height:100%;
-  display:block;
-}
-
-/* 🎲 КНОПКА */
-#rollButton{
-  margin-top:10px;
-  padding:18px 30px;
-  font-size:20px;
-  border:none;
-  border-radius:15px;
-  background:linear-gradient(45deg, orange, red);
-  color:white;
-  cursor:pointer;
-
-  box-shadow:
-    0 0 10px orange,
-    0 0 20px red;
-}
-
-#rollButton:active{
-  transform:scale(0.95);
-}
-
-/* 🔥 ШКАЛА ХАЙПА */
-#hype-bars{
+/* инпуты */
+input{
   width:90%;
-  max-width:500px;
+  padding:10px;
+  margin:10px;
+  border:none;
+  border-radius:10px;
 }
 
-#hype-bars div{
-  margin:5px 0;
-}
-
-/* 💥 OVERLAY */
-#overlay{
-  position:fixed;
-  top:0;
-  left:0;
-  width:100%;
-  height:100%;
+/* фишки */
+.tokens{
   display:flex;
   justify-content:center;
-  align-items:center;
-  background:rgba(0,0,0,0.7);
-  z-index:1000;
+  gap:10px;
+  margin:15px 0;
 }
 
-/* ❌ скрытие */
+.tokenSelect{
+  width:40px;
+  height:40px;
+  border-radius:50%;
+  cursor:pointer;
+  border:3px solid transparent;
+}
+
+.tokenSelect.active{
+  border:3px solid white;
+  box-shadow:0 0 10px white;
+}
+
+.red{background:red;}
+.yellow{background:yellow;}
+.blue{background:cyan;}
+.purple{background:purple;}
+
+/* кнопки */
+button{
+  padding:10px 20px;
+  border:none;
+  border-radius:10px;
+  cursor:pointer;
+  background:linear-gradient(45deg, orange, red);
+  color:white;
+}
+
 .hidden{
   display:none;
 }
 
-/* 🔥 КАРТОЧКА */
-.card{
-  padding:30px;
-  border-radius:20px;
-  font-size:22px;
-  text-align:center;
-  max-width:300px;
-  animation:pop 0.3s ease;
+/* правила */
+.rules{
+  margin-top:20px;
+  font-size:14px;
+  opacity:0.8;
 }
-
-/* 💥 скандал */
-.scandal{
-  background:#1a0000;
-  color:#ff4d4d;
-  box-shadow:
-    0 0 20px red,
-    0 0 40px crimson;
-}
-
-/* 🎲 риск */
-.risk{
-  background:#001a1a;
-  color:#00ffff;
-  box-shadow:
-    0 0 20px cyan,
-    0 0 40px blue;
-}
-
-/* ⚖️ суд */
-.skip{
-  background:#111;
-  color:orange;
-  box-shadow:
-    0 0 20px orange;
-}
-
-@keyframes pop{
-  from{transform:scale(0.7); opacity:0;}
-  to{transform:scale(1); opacity:1;}
-}
-
