@@ -40,7 +40,7 @@
 
 <script>
 const socket = io();
-let selected = null;
+let selected = "red"; // по умолчанию
 
 document.querySelectorAll(".tokenSelect").forEach(t=>{
   t.onclick = ()=>{
