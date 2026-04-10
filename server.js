@@ -22,6 +22,26 @@ io.on('connection', socket => {
         turn: 0
       };
     }
+
+    socket.on("riskRoll", ()=>{
+  const game = rooms[socket.room];
+  if(!game) return;
+
+  const player = game.players.find(p=>p.id === socket.id);
+  if(!player) return;
+
+  const dice = Math.floor(Math.random()*6)+1;
+
+  if(dice <= 3){
+    player.hype -= 5;
+  } else {
+    player.hype += 5;
+  }
+
+  if(player.hype < 0) player.hype = 0;
+
+  io.to(socket.room).emit("players", game.players);
+});
     socket.on("startGame", ()=>{
   const room = socket.room;
 
@@ -31,10 +51,30 @@ io.on('connection', socket => {
   if(rooms[room].players.length < 2){
     return;
   }
+      
 
   io.to(room).emit("startGame");
 });
 
+    socket.on("rollDice", ()=>{
+  const game = rooms[socket.room];
+  if(!game) return;
+
+  const player = game.players[game.turn];
+  if(player.id !== socket.id) return;
+
+  const dice = Math.floor(Math.random()*6)+1;
+
+  io.to(socket.room).emit("diceResult", {
+    playerId: player.id,
+    dice
+  });
+
+  player.position += dice;
+
+  io.to(socket.room).emit("players", game.players);
+});
+    
     const game = rooms[room];
 
     // 💣 убираем уже занятые цвета
