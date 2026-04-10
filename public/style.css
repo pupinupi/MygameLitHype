@@ -151,6 +151,11 @@ button{
   border-radius:15px;
   box-shadow:0 0 20px orange, 0 0 40px red;
 }
+#diceBox{
+  position:relative;
+  z-index:20;
+}
+
 
 /* 💥 СКАНДАЛ */
 #scandalCard{
@@ -188,12 +193,7 @@ button{
 
   z-index:10;
 }
-.riskBox{
-  background:#111;
-  padding:30px;
-  border-radius:20px;
-  box-shadow:0 0 30px purple;
-}
+riskBox
 
 /* скрытие */
 .hidden{
