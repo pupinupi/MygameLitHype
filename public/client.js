@@ -5,7 +5,7 @@ const name = localStorage.getItem("name");
 const room = localStorage.getItem("room");
 let token = localStorage.getItem("token");
 
-// 🛑 если вдруг token сломался — задаём по умолчанию
+// fallback
 if(!token){
   const fallback = ["red","yellow","blue","purple"];
   token = fallback[Math.floor(Math.random()*4)];
@@ -22,9 +22,6 @@ const ctx = canvas.getContext("2d");
 const img = new Image();
 img.src = "board.jpg";
 
-// 📍 старт
-const startCell = { x: 120, y: 720 };
-
 // 👥 игроки
 let players = [];
 
@@ -36,8 +33,38 @@ const colors = {
   purple: "#b93bff"
 };
 
-// 💥 если токен вдруг кривой — даём цвет по индексу
 const fallbackColors = ["#ff3b3b","#ffd93b","#3bd1ff","#b93bff"];
+
+// 📍 путь (4 вверх, 6 вправо, 4 вниз, 6 влево)
+const path = [];
+
+// старт
+let x = 120;
+let y = 720;
+
+// вверх
+for(let i=0;i<4;i++){
+  path.push({x,y});
+  y -= 80;
+}
+
+// вправо
+for(let i=0;i<6;i++){
+  path.push({x,y});
+  x += 80;
+}
+
+// вниз
+for(let i=0;i<4;i++){
+  path.push({x,y});
+  y += 80;
+}
+
+// влево
+for(let i=0;i<6;i++){
+  path.push({x,y});
+  x -= 80;
+}
 
 // 🎨 отрисовка
 function draw(){
@@ -46,36 +73,105 @@ function draw(){
 
   players.forEach((p, i)=>{
 
-    let color = colors[p.token];
+    let color = colors[p.token] || fallbackColors[i % 4];
 
-    // если токен сломан — даём цвет по порядку
-    if(!color){
-      color = fallbackColors[i % fallbackColors.length];
-    }
+    const pos = path[p.position % path.length] || path[0];
 
-    // 💡 свечение
     ctx.shadowColor = color;
     ctx.shadowBlur = 25;
 
     ctx.beginPath();
-    ctx.arc(startCell.x + i*35, startCell.y, 16, 0, Math.PI*2);
+    ctx.arc(pos.x + i*10, pos.y, 14, 0, Math.PI*2);
     ctx.fillStyle = color;
     ctx.fill();
 
     ctx.shadowBlur = 0;
 
-    // имя
     ctx.fillStyle = "white";
-    ctx.font = "13px Arial";
-    ctx.fillText(p.name, startCell.x + i*35 - 15, startCell.y + 35);
+    ctx.font = "12px Arial";
+    ctx.fillText(p.name, pos.x - 15, pos.y + 25);
   });
 }
 
-// загрузка поля
 img.onload = draw;
 
-// обновление игроков
+// 🎲 кнопка
+document.getElementById("rollButton").onclick = ()=>{
+  socket.emit("rollDice");
+};
+
+// 🎲 результат кубика + движение
+socket.on("diceResult", data=>{
+  document.getElementById("diceBox").innerText = "🎲 " + data.dice;
+
+  const player = players.find(p=>p.id === data.playerId);
+  if(player){
+    movePlayer(player, data.dice);
+  }
+});
+
+// 🚶 плавное движение
+function movePlayer(player, steps){
+  let i = 0;
+
+  function step(){
+    if(i >= steps) return;
+
+    player.position++;
+    draw();
+
+    i++;
+    setTimeout(step, 300);
+  }
+
+  step();
+}
+
+// 💥 скандал
+socket.on("showScandal", card=>{
+  const el = document.getElementById("scandalCard");
+
+  el.innerText = card.text;
+  el.classList.remove("hidden");
+
+  // 💣 эффект тряски
+  document.body.style.transform = "translateX(5px)";
+  setTimeout(()=>document.body.style.transform = "translateX(-5px)",100);
+  setTimeout(()=>document.body.style.transform = "translateX(0)",200);
+
+  setTimeout(()=>{
+    el.classList.add("hidden");
+  }, 2500);
+});
+
+// ⚡ риск
+socket.on("risk", ()=>{
+  document.getElementById("riskModal").classList.remove("hidden");
+});
+
+document.getElementById("riskRoll").onclick = ()=>{
+  socket.emit("riskRoll");
+  document.getElementById("riskModal").classList.add("hidden");
+};
+
+// 📊 обновление игроков + хайпа
 socket.on("players", data=>{
   players = data;
+
+  const me = players.find(p=>p.id === socket.id);
+
+  if(me){
+    const percent = (me.hype / 70) * 100;
+
+    document.getElementById("hypeFill").style.width = percent + "%";
+    document.getElementById("hypeText").innerText =
+      `Хайп: ${me.hype} / 70`;
+  }
+
   draw();
+});
+
+// 🏆 победа
+socket.on("win", ()=>{
+  alert("🔥 ТЫ НАБРАЛ 70 ХАЙПА И ВЫИГРАЛ!");
 });
