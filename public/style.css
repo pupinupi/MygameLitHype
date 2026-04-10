@@ -1,4 +1,3 @@
-/* 🌌 ОБЩЕЕ */
 body{
   margin:0;
   font-family:Arial;
@@ -9,132 +8,47 @@ body{
 
 /* 🔥 заголовок */
 .title{
-  margin-top:20px;
-  font-size:26px;
+  margin:10px 0 5px;
+  font-size:22px;
   color:#00eaff;
-  text-shadow:0 0 20px cyan;
+  text-shadow:0 0 15px cyan;
 }
 
 /* 📦 контейнер */
-.container{
-  margin:20px auto;
-  padding:20px;
-  width:300px;
-  background:#111;
-  border-radius:20px;
-  box-shadow:0 0 30px #00eaff;
-}
-
-/* 🧾 инпуты */
-input{
-  width:90%;
-  padding:10px;
-  margin:10px;
-  border:none;
-  border-radius:10px;
-}
-
-/* 🎨 фишки */
-.tokens{
-  display:flex;
-  justify-content:center;
-  gap:10px;
-  margin:15px 0;
-}
-
-.tokenSelect{
-  width:40px;
-  height:40px;
-  border-radius:50%;
-  cursor:pointer;
-  border:3px solid transparent;
-  transition:0.2s;
-}
-
-.tokenSelect.active{
-  transform:scale(1.2);
-  border:3px solid white;
-  box-shadow:0 0 20px white;
-}
-
-.red{background:red;}
-.yellow{background:yellow;}
-.blue{background:cyan;}
-.purple{background:purple;}
-
-/* 🔘 кнопки */
-button{
-  padding:12px 22px;
-  border:none;
-  border-radius:12px;
-  cursor:pointer;
-  background:linear-gradient(45deg, orange, red);
-  color:white;
-  font-size:16px;
-}
-
-/* скрытие */
-.hidden{
-  display:none;
-}
-
-/* 📜 правила */
-.rules{
-  margin-top:20px;
-  font-size:14px;
-  opacity:0.8;
-}
-
-/* 🎮 игровая зона */
 #game-container{
   display:flex;
   flex-direction:column;
   align-items:center;
-  justify-content:space-between;
-
-  height:100vh;
+  gap:10px;
   padding:10px;
 }
-/* 🎯 ХАЙП */
+
+/* 📊 ХАЙП */
 #hypeUI{
   width:90%;
-  max-width:400px;
-  margin-top:10px;
+  max-width:350px;
 }
 
 #hypeText{
   font-size:14px;
-  margin-bottom:5px;
+  margin-bottom:3px;
 }
 
 #hypeBar{
   width:100%;
-  height:18px;
+  height:16px;
   background:#111;
   border-radius:10px;
   overflow:hidden;
-  box-shadow:0 0 15px cyan;
+  box-shadow:0 0 10px cyan;
 }
 
 #hypeFill{
   height:100%;
   width:0%;
   background:cyan;
-  box-shadow:0 0 20px cyan, 0 0 40px cyan;
-  transition:0.4s;
-}
-
-/* 🎲 КУБИК */
-#diceBox{
-  font-size:32px;
-  background:#111;
-  padding:12px 20px;
-  border-radius:15px;
-  box-shadow:
-    0 0 20px orange,
-    0 0 40px red;
-  position:relative;
-  z-index:15;
+  box-shadow:0 0 15px cyan;
+  transition:0.3s;
 }
 
 /* 🎮 ПОЛЕ */
@@ -143,63 +57,43 @@ button{
   max-width:420px;
   aspect-ratio:1/1;
 
-  border-radius:20px;
+  border-radius:15px;
   overflow:hidden;
 
   box-shadow:
-    0 0 20px cyan,
-    0 0 40px #00eaff,
-    0 0 80px #00eaff;
+    0 0 15px cyan,
+    0 0 30px #00eaff;
 
   position:relative;
-  z-index:5;
 }
 
-/* canvas */
 #gameCanvas{
   width:100%;
   height:100%;
 }
 
-/* 🎲 кнопка */
+/* 🎲 КУБИК */
+#diceBox{
+  font-size:28px;
+  padding:8px 15px;
+  background:#111;
+  border-radius:10px;
+  box-shadow:0 0 15px orange;
+}
+
+/* 🔘 КНОПКА */
 #rollButton{
   width:80%;
-  max-width:250px;
-  margin-bottom:20px;
+  max-width:220px;
+  padding:12px;
+  font-size:16px;
+  border:none;
+  border-radius:12px;
+  background:linear-gradient(45deg, orange, red);
+  color:white;
 }
 
-/* 💥 СКАНДАЛ */
-#scandalCard{
-  position:fixed;
-  top:50%;
-  left:50%;
-  transform:translate(-50%,-50%);
-  background:#300;
-  padding:25px;
-  border-radius:20px;
-  font-size:20px;
-
-  box-shadow:
-    0 0 30px red,
-    0 0 60px red;
-
-  z-index:30;
-
-  animation:pop 0.3s ease;
-}
-
-@keyframes pop{
-  from{
-    transform:translate(-50%,-60%) scale(0.8);
-    opacity:0;
-  }
-  to{
-    transform:translate(-50%,-50%) scale(1);
-    opacity:1;
-  }
-}
-
-/* ⚡ РИСК (как мобильная игра) */
+/* ⚡ РИСК НА ПОЛЕ */
 #riskModal{
   position:absolute;
   top:50%;
@@ -207,35 +101,38 @@ button{
   transform:translate(-50%,-50%);
 
   width:80%;
-  max-width:260px;
-
+  max-width:250px;
   z-index:10;
 }
-/* карточка */
+
 .riskBox{
-  width:90%;
-  max-width:320px;
-
-  margin-bottom:25px;
-
   background:#111;
-  padding:25px;
-  border-radius:20px;
+  padding:15px;
+  border-radius:15px;
 
   box-shadow:
-    0 0 20px purple,
-    0 0 40px magenta;
-
-  animation:slideUp 0.3s ease;
+    0 0 15px orange,
+    0 0 30px red;
 }
 
-@keyframes slideUp{
-  from{
-    transform:translateY(100%);
-    opacity:0;
-  }
-  to{
-    transform:translateY(0);
-    opacity:1;
-  }
+/* 💥 СКАНДАЛ */
+#scandalCard{
+  position:fixed;
+  top:45%;
+  left:50%;
+  transform:translate(-50%,-50%);
+
+  padding:20px;
+  font-size:18px;
+
+  background:#300;
+  border-radius:15px;
+
+  box-shadow:0 0 25px red;
+
+  z-index:20;
+}
+
+.hidden{
+  display:none;
 }
