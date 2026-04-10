@@ -2,17 +2,28 @@
 <html>
 <head>
 <meta charset="UTF-8">
+<title>Игра</title>
 <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-<h1>Игра началась 🎮</h1>
+<h1 class="title">🎮 Игра началась</h1>
+
+<div id="game-container">
+
+  <!-- поле -->
+  <div class="board-wrapper">
+    <canvas id="gameCanvas" width="800" height="800"></canvas>
+  </div>
+
+  <!-- кнопка -->
+  <button id="rollButton">🎲 Бросить кубик</button>
+
+</div>
 
 <script src="/socket.io/socket.io.js"></script>
-<script>
-const socket = io();
-</script>
+<script src="client.js"></script>
 
 </body>
 </html>
