@@ -105,6 +105,9 @@ img.onload = draw;
 
 // 🎲 кнопка
 document.getElementById("rollButton").onclick = ()=>{
+  diceSound.currentTime = 0;
+  diceSound.play();
+
   socket.emit("rollDice");
 };
 
