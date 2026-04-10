@@ -1,16 +1,19 @@
 <!DOCTYPE html>
-<html>
+<html lang="ru">
 <head>
 <meta charset="UTF-8">
+<title>Лобби</title>
 <link rel="stylesheet" href="style.css">
 </head>
 
-<body class="lobby">
+<body>
 
-<h1>🔥 Литвин. Путь к хайпу 🔥</h1>
+<h1 class="title">🔥 Литвин. Путь к хайпу 🔥</h1>
+
+<div class="container">
 
 <input id="name" placeholder="Имя">
-<input id="room" placeholder="Комната">
+<input id="room" placeholder="Код комнаты">
 
 <div class="tokens">
   <div class="tokenSelect red" data-color="red"></div>
@@ -23,7 +26,15 @@
 
 <div id="players"></div>
 
-<button id="startBtn" class="hidden">Начать игру</button>
+<button id="startBtn" class="hidden">🚀 Начать игру</button>
+
+<div class="rules">
+<p>Цель: набрать 70 хайпа</p>
+<p>Бросай кубик и двигайся</p>
+<p>Скандалы могут снизить хайп</p>
+</div>
+
+</div>
 
 <script src="/socket.io/socket.io.js"></script>
 
@@ -43,18 +54,19 @@ document.getElementById("joinBtn").onclick = ()=>{
   const name = document.getElementById("name").value;
   const room = document.getElementById("room").value;
 
-  localStorage.setItem("name", name);
-  localStorage.setItem("room", room);
-  localStorage.setItem("token", selected);
+  if(!name || !room || !selected){
+    alert("Заполни всё");
+    return;
+  }
 
   socket.emit("join", {name, room, token:selected});
 };
 
 socket.on("players", players=>{
   document.getElementById("players").innerHTML =
-    players.map(p=>p.name+" ("+p.token+")").join("<br>");
+    players.map(p=>`<div>${p.name} (${p.token})</div>`).join("");
 
-  if(players[0].id === socket.id){
+  if(players.length >= 2){
     document.getElementById("startBtn").classList.remove("hidden");
   }
 });
@@ -64,7 +76,7 @@ document.getElementById("startBtn").onclick = ()=>{
 };
 
 socket.on("startGame", ()=>{
-  window.location.href="game.html";
+  window.location.href = "game.html";
 });
 </script>
 
