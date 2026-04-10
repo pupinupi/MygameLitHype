@@ -7,6 +7,9 @@ app.use(express.static('public'));
 
 let rooms = {};
 
+// 🎨 доступные фишки
+const TOKENS = ["red","yellow","blue","purple"];
+
 io.on('connection', socket => {
 
   socket.on('join', ({name, room, token})=>{
@@ -14,29 +17,35 @@ io.on('connection', socket => {
     socket.room = room;
 
     if(!rooms[room]){
-      rooms[room] = { players: [], turn: 0 };
+      rooms[room] = {
+        players: [],
+        turn: 0
+      };
+    }
+
+    const game = rooms[room];
+
+    // 💣 убираем уже занятые цвета
+    const used = game.players.map(p=>p.token);
+
+    let finalToken = token;
+
+    if(!finalToken || used.includes(finalToken)){
+      finalToken = TOKENS.find(t => !used.includes(t)) || "white";
     }
 
     const player = {
       id: socket.id,
       name,
-      token,
+      token: finalToken,
       hype: 0,
       position: 0,
       skip: false
     };
 
-    rooms[room].players.push(player);
+    game.players.push(player);
 
-    io.to(room).emit('players', rooms[room].players);
-  });
-
-  socket.on('startGame', ()=>{
-    if(socket.room){
-      io.to(socket.room).emit('startGame');
-    }
+    io.to(room).emit('players', game.players);
   });
 
 });
-
-server.listen(3000, ()=>console.log("Server running"));
