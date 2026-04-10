@@ -7,22 +7,12 @@
 
 <body>
 
-<div id="game-container">
-
-<div id="hype-bars"></div>
-
-<div class="board-wrapper">
-<canvas id="gameCanvas" width="1024" height="1024"></canvas>
-</div>
-
-<button id="rollButton">🎲 Бросить кубик</button>
-
-</div>
-
-<div id="overlay" class="hidden"></div>
+<h1>Игра началась 🎮</h1>
 
 <script src="/socket.io/socket.io.js"></script>
-<script src="client.js"></script>
+<script>
+const socket = io();
+</script>
 
 </body>
 </html>
