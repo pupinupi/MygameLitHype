@@ -1,57 +1,80 @@
 const socket = io();
 
-// получаем данные из лобби
+// 📦 данные из лобби
 const name = localStorage.getItem("name");
 const room = localStorage.getItem("room");
-const token = localStorage.getItem("token");
+let token = localStorage.getItem("token");
 
-// подключаемся
-socket.emit("join", {name, room, token});
+// 🛑 если вдруг token сломался — задаём по умолчанию
+if(!token){
+  const fallback = ["red","yellow","blue","purple"];
+  token = fallback[Math.floor(Math.random()*4)];
+}
 
+// подключение
+socket.emit("join", { name, room, token });
+
+// 🎮 canvas
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
 
+// 🖼 поле
 const img = new Image();
 img.src = "board.jpg";
 
-// 📍 координаты СТАРТА (пока все стоят здесь)
-const startCell = {x: 100, y: 700};
+// 📍 старт
+const startCell = { x: 120, y: 720 };
 
+// 👥 игроки
 let players = [];
 
-// 🎨 цвета фишек
+// 🎨 цвета
 const colors = {
-  red: "red",
-  yellow: "yellow",
-  blue: "cyan",
-  purple: "purple"
+  red: "#ff3b3b",
+  yellow: "#ffd93b",
+  blue: "#3bd1ff",
+  purple: "#b93bff"
 };
 
-// 🧠 отрисовка
+// 💥 если токен вдруг кривой — даём цвет по индексу
+const fallbackColors = ["#ff3b3b","#ffd93b","#3bd1ff","#b93bff"];
+
+// 🎨 отрисовка
 function draw(){
   ctx.clearRect(0,0,canvas.width,canvas.height);
   ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
   players.forEach((p, i)=>{
+
+    let color = colors[p.token];
+
+    // если токен сломан — даём цвет по порядку
+    if(!color){
+      color = fallbackColors[i % fallbackColors.length];
+    }
+
+    // 💡 свечение
+    ctx.shadowColor = color;
+    ctx.shadowBlur = 25;
+
     ctx.beginPath();
-    ctx.fillStyle = colors[p.token] || "white";
-
-    // чтобы не накладывались
-    ctx.arc(startCell.x + i*25, startCell.y, 15, 0, Math.PI*2);
-
+    ctx.arc(startCell.x + i*35, startCell.y, 16, 0, Math.PI*2);
+    ctx.fillStyle = color;
     ctx.fill();
 
-    // подпись имени
+    ctx.shadowBlur = 0;
+
+    // имя
     ctx.fillStyle = "white";
-    ctx.font = "12px Arial";
-    ctx.fillText(p.name, startCell.x + i*25 - 15, startCell.y + 30);
+    ctx.font = "13px Arial";
+    ctx.fillText(p.name, startCell.x + i*35 - 15, startCell.y + 35);
   });
 }
 
 // загрузка поля
 img.onload = draw;
 
-// получаем игроков
+// обновление игроков
 socket.on("players", data=>{
   players = data;
   draw();
