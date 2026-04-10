@@ -1,3 +1,11 @@
+// 🔊 звуки
+const diceSound = new Audio("dice.mp3");
+const scandalSound = new Audio("scandal.mp3");
+
+// чуть тише и приятнее
+diceSound.volume = 0.7;
+scandalSound.volume = 0.8;
+
 const socket = io();
 
 // 📦 данные из лобби
