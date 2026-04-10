@@ -8,9 +8,20 @@
 
 <body>
 
-<h1 class="title">🎮 Игра началась</h1>
+<h1 class="title">🔥 Литвин. Путь к хайпу 🔥</h1>
 
 <div id="game-container">
+
+  <!-- 🎯 шкала хайпа -->
+  <div id="hypeUI">
+    <div id="hypeText">Хайп: 0 / 70</div>
+    <div id="hypeBar">
+      <div id="hypeFill"></div>
+    </div>
+  </div>
+
+  <!-- 🎲 кубик -->
+  <div id="diceBox">🎲 ?</div>
 
   <!-- поле -->
   <div class="board-wrapper">
@@ -20,6 +31,19 @@
   <!-- кнопка -->
   <button id="rollButton">🎲 Бросить кубик</button>
 
+</div>
+
+<!-- 💥 окно скандала -->
+<div id="scandalCard" class="hidden"></div>
+
+<!-- ⚡ риск -->
+<div id="riskModal" class="hidden">
+  <div class="riskBox">
+    <h2>⚠ Риск</h2>
+    <p>1–3 → −5 хайпа</p>
+    <p>4–6 → +5 хайпа</p>
+    <button id="riskRoll">🎲 Бросить</button>
+  </div>
 </div>
 
 <script src="/socket.io/socket.io.js"></script>
