@@ -22,6 +22,18 @@ io.on('connection', socket => {
         turn: 0
       };
     }
+    socket.on("startGame", ()=>{
+  const room = socket.room;
+
+  if(!rooms[room]) return;
+
+  // можно добавить проверку (например минимум 2 игрока)
+  if(rooms[room].players.length < 2){
+    return;
+  }
+
+  io.to(room).emit("startGame");
+});
 
     const game = rooms[room];
 
