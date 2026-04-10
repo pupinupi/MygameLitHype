@@ -115,3 +115,83 @@ button{
   padding:15px 25px;
   font-size:18px;
 }
+
+/* 🔥 ХАЙП UI */
+#hypeUI{
+  width:300px;
+}
+
+#hypeText{
+  margin-bottom:5px;
+  font-size:16px;
+}
+
+#hypeBar{
+  width:100%;
+  height:20px;
+  background:#111;
+  border-radius:10px;
+  overflow:hidden;
+  box-shadow:0 0 20px cyan;
+}
+
+#hypeFill{
+  height:100%;
+  width:0%;
+  background:cyan;
+  box-shadow:0 0 25px cyan, 0 0 50px cyan;
+  transition:0.4s;
+}
+
+/* 🎲 кубик */
+#diceBox{
+  font-size:40px;
+  background:#111;
+  padding:15px 25px;
+  border-radius:15px;
+  box-shadow:0 0 20px orange, 0 0 40px red;
+}
+
+/* 💥 СКАНДАЛ */
+#scandalCard{
+  position:fixed;
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-50%);
+  background:#300;
+  padding:30px;
+  border-radius:20px;
+  font-size:22px;
+  box-shadow:0 0 30px red, 0 0 60px red;
+  animation:pop 0.3s ease;
+}
+
+@keyframes pop{
+  from{transform:translate(-50%,-70%) scale(0.8);}
+  to{transform:translate(-50%,-50%) scale(1);}
+}
+
+/* ⚡ РИСК */
+#riskModal{
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background:rgba(0,0,0,0.8);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.riskBox{
+  background:#111;
+  padding:30px;
+  border-radius:20px;
+  box-shadow:0 0 30px purple;
+}
+
+/* скрытие */
+.hidden{
+  display:none;
+}
