@@ -2,49 +2,36 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Игра</title>
 <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
 
-<h1 class="title">🔥 Литвин. Путь к хайпу 🔥</h1>
+<h1 class="title">🔥 Игра</h1>
 
 <div id="game-container">
 
-  <!-- 📊 ХАЙП -->
-  <div id="hypeUI">
-    <div id="hypeText">Хайп: 0 / 70</div>
-    <div id="hypeBar">
-      <div id="hypeFill"></div>
-    </div>
-  </div>
+<div id="hypeUI">
+<div id="hypeText">0 / 70</div>
+<div id="hypeBar"><div id="hypeFill"></div></div>
+</div>
 
-  <!-- 🎮 ПОЛЕ -->
-  <div class="board-wrapper">
-    <canvas id="gameCanvas" width="800" height="800"></canvas>
+<div class="board-wrapper">
+<canvas id="gameCanvas" width="800" height="800"></canvas>
 
-    <!-- ⚡ РИСК НА ПОЛЕ -->
-    <div id="riskModal" class="hidden">
-      <div class="riskBox">
-        <h3>⚠ Риск</h3>
-        <p>1–3 → −5 хайпа</p>
-        <p>4–6 → +5 хайпа</p>
-        <button id="riskRoll">🎲 Бросить</button>
-      </div>
-    </div>
-
-  </div>
-
-  <!-- 🎲 КУБИК -->
-  <div id="diceBox">🎲 ?</div>
-
-  <!-- 🔘 КНОПКА -->
-  <button id="rollButton">🎲 Бросить кубик</button>
+<div id="riskModal" class="hidden">
+<div class="riskBox">
+<p>Риск</p>
+<button id="riskRoll">🎲</button>
+</div>
+</div>
 
 </div>
 
-<!-- 💥 СКАНДАЛ -->
+<div id="diceBox">🎲</div>
+<button id="rollButton">Бросить</button>
+
+</div>
+
 <div id="scandalCard" class="hidden"></div>
 
 <script src="/socket.io/socket.io.js"></script>
