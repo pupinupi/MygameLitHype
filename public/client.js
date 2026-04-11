@@ -177,10 +177,20 @@ panel.appendChild(pre);
 document.body.appendChild(panel);
 
 // включение режима
-coordBtn.onclick = ()=>{
-  coordMode = !coordMode;
-  panel.style.display = coordMode ? "block" : "none";
-};
+const coordBtn = document.createElement("button");
+coordBtn.innerText = "📍 Координаты";
+
+coordBtn.style.position = "fixed";
+coordBtn.style.bottom = "20px";
+coordBtn.style.right = "20px";
+coordBtn.style.zIndex = "999";
+coordBtn.style.padding = "10px";
+coordBtn.style.background = "cyan";
+coordBtn.style.color = "black";
+coordBtn.style.border = "none";
+coordBtn.style.borderRadius = "10px";
+
+document.body.appendChild(coordBtn);
 
 // клик по полю
 canvas.addEventListener("click", (e)=>{
