@@ -68,16 +68,19 @@ function draw(){
   });
 
   // точки координат
-  points.forEach(p=>{
-    const px = p.x * canvas.width;
-    const py = p.y * canvas.height;
+  points.forEach((p,i)=>{
+  const px = p.x * canvas.width;
+  const py = p.y * canvas.height;
 
-    ctx.beginPath();
-    ctx.arc(px, py, 6, 0, Math.PI*2);
-    ctx.fillStyle = "cyan";
-    ctx.fill();
-  });
-}
+  ctx.beginPath();
+  ctx.arc(px, py, 8, 0, Math.PI*2);
+  ctx.fillStyle = "cyan";
+  ctx.fill();
+
+  ctx.fillStyle = "white";
+  ctx.font = "12px Arial";
+  ctx.fillText(i, px+10, py-10);
+});
 
 img.onload = draw;
 
@@ -185,10 +188,20 @@ canvas.addEventListener("click", (e)=>{
 
   const rect = canvas.getBoundingClientRect();
 
-  const x = (e.clientX - rect.left) / rect.width;
-  const y = (e.clientY - rect.top) / rect.height;
+  // 💡 ВАЖНО: учитываем масштаб
+  const scaleX = canvas.width / rect.width;
+  const scaleY = canvas.height / rect.height;
 
-  points.push({x:+x.toFixed(3), y:+y.toFixed(3)});
+  const x = (e.clientX - rect.left) * scaleX;
+  const y = (e.clientY - rect.top) * scaleY;
+
+  // переводим в %
+  const nx = +(x / canvas.width).toFixed(3);
+  const ny = +(y / canvas.height).toFixed(3);
+
+  points.push({x:nx, y:ny});
+
+  console.log("📍", nx, ny);
 
   updateCoords();
   draw();
