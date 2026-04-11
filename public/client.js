@@ -1,12 +1,13 @@
 const socket = io();
 
+// 📦 данные
 const name = localStorage.getItem("name");
 const room = localStorage.getItem("room");
 let token = localStorage.getItem("token");
 
 socket.emit("join", { name, room, token });
 
-// 🎧 звуки
+// 🔊 звуки
 const diceSound = new Audio("dice.mp3");
 const scandalSound = new Audio("scandal.mp3");
 
@@ -14,13 +15,23 @@ const scandalSound = new Audio("scandal.mp3");
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
 
+// 🖼 поле
 const img = new Image();
 img.src = "board.jpg";
 
+// 👥 игроки
 let players = [];
 let myTurn = false;
 
-// 📍 путь (временно простой)
+// 🎨 цвета
+const colors = {
+  red:"#ff3b3b",
+  yellow:"#ffd93b",
+  blue:"#3bd1ff",
+  purple:"#b93bff"
+};
+
+// 📍 временный путь (потом заменишь координатами)
 const path = [];
 let x = 120, y = 720;
 
@@ -33,24 +44,37 @@ for(let i=0;i<4;i++){ path.push({x,y}); y+=80; }
 // влево
 for(let i=0;i<6;i++){ path.push({x,y}); x-=80; }
 
-const colors = {
-  red:"#ff3b3b",
-  yellow:"#ffd93b",
-  blue:"#3bd1ff",
-  purple:"#b93bff"
-};
+// 📍 режим координат
+let coordMode = false;
+let points = [];
 
 // 🎨 отрисовка
 function draw(){
   ctx.clearRect(0,0,canvas.width,canvas.height);
   ctx.drawImage(img,0,0,canvas.width,canvas.height);
 
+  // игроки
   players.forEach((p,i)=>{
     const pos = path[p.position % path.length] || path[0];
 
     ctx.beginPath();
     ctx.arc(pos.x,pos.y,12,0,Math.PI*2);
     ctx.fillStyle = colors[p.token] || "white";
+    ctx.fill();
+
+    ctx.fillStyle = "white";
+    ctx.font = "10px Arial";
+    ctx.fillText(p.name, pos.x-10, pos.y+25);
+  });
+
+  // точки координат
+  points.forEach(p=>{
+    const px = p.x * canvas.width;
+    const py = p.y * canvas.height;
+
+    ctx.beginPath();
+    ctx.arc(px, py, 6, 0, Math.PI*2);
+    ctx.fillStyle = "cyan";
     ctx.fill();
   });
 }
@@ -73,7 +97,7 @@ socket.on("diceResult", data=>{
   document.getElementById("diceBox").innerText = "🎲 "+data.dice;
 });
 
-// 👥 обновление
+// 👥 обновление игроков
 socket.on("players", data=>{
   players = data;
 
@@ -82,6 +106,7 @@ socket.on("players", data=>{
   if(me){
     const percent = (me.hype / 70)*100;
     document.getElementById("hypeFill").style.width = percent+"%";
+    document.getElementById("hypeText").innerText = me.hype + " / 70";
   }
 
   draw();
@@ -117,3 +142,72 @@ socket.on("yourTurn", ()=>{
 socket.on("win", ()=>{
   alert("🔥 Ты выиграл!");
 });
+
+
+// =========================
+// 📍 РЕЖИМ КООРДИНАТ
+// =========================
+
+// кнопки (создаём если нет)
+const coordBtn = document.createElement("button");
+coordBtn.innerText = "📍 Координаты";
+document.body.appendChild(coordBtn);
+
+const panel = document.createElement("div");
+panel.style.background="#111";
+panel.style.padding="10px";
+panel.style.margin="10px";
+panel.style.display="none";
+
+const pre = document.createElement("pre");
+
+const copyBtn = document.createElement("button");
+copyBtn.innerText="📋 копировать";
+
+const clearBtn = document.createElement("button");
+clearBtn.innerText="🧹 очистить";
+
+panel.appendChild(copyBtn);
+panel.appendChild(clearBtn);
+panel.appendChild(pre);
+
+document.body.appendChild(panel);
+
+// включение режима
+coordBtn.onclick = ()=>{
+  coordMode = !coordMode;
+  panel.style.display = coordMode ? "block" : "none";
+};
+
+// клик по полю
+canvas.addEventListener("click", (e)=>{
+  if(!coordMode) return;
+
+  const rect = canvas.getBoundingClientRect();
+
+  const x = (e.clientX - rect.left) / rect.width;
+  const y = (e.clientY - rect.top) / rect.height;
+
+  points.push({x:+x.toFixed(3), y:+y.toFixed(3)});
+
+  updateCoords();
+  draw();
+});
+
+// вывод
+function updateCoords(){
+  pre.innerText = JSON.stringify(points, null, 2);
+}
+
+// копировать
+copyBtn.onclick = ()=>{
+  navigator.clipboard.writeText(JSON.stringify(points));
+  alert("Скопировано!");
+};
+
+// очистка
+clearBtn.onclick = ()=>{
+  points = [];
+  updateCoords();
+  draw();
+};
