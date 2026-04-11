@@ -1,38 +1,89 @@
 <!DOCTYPE html>
-<html>
+<html lang="ru">
 <head>
 <meta charset="UTF-8">
+<title>Лобби</title>
 <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
-<h1 class="title">🔥 Литвин. Путь к хайпу</h1>
+<h1 class="title">🔥 Литвин. Путь к хайпу 🔥</h1>
+
+<div class="container">
 
 <input id="name" placeholder="Имя">
-<input id="room" placeholder="Комната">
+<input id="room" placeholder="Код комнаты">
 
-<button onclick="join()">Войти</button>
-<button onclick="start()">Начать игру</button>
+<!-- 🎨 ВЫБОР ФИШКИ -->
+<div class="tokens">
+  <div class="tokenSelect red" data-color="red"></div>
+  <div class="tokenSelect yellow" data-color="yellow"></div>
+  <div class="tokenSelect blue" data-color="blue"></div>
+  <div class="tokenSelect purple" data-color="purple"></div>
+</div>
+
+<button id="joinBtn">Войти</button>
+
+<div id="players"></div>
+
+<button id="startBtn" class="hidden">🚀 Начать игру</button>
+
+<div class="rules">
+<p>Цель: набрать 70 хайпа</p>
+<p>Бросай кубик и двигайся</p>
+<p>Скандалы могут снизить хайп</p>
+</div>
+
+</div>
 
 <script src="/socket.io/socket.io.js"></script>
 
 <script>
 const socket = io();
 
-function join(){
+let selected = "red";
+
+// 🎨 выбор фишки
+document.querySelectorAll(".tokenSelect").forEach(t=>{
+  t.onclick = ()=>{
+    document.querySelectorAll(".tokenSelect").forEach(el=>el.classList.remove("active"));
+    t.classList.add("active");
+    selected = t.dataset.color;
+  };
+});
+
+// 🔗 вход
+document.getElementById("joinBtn").onclick = ()=>{
   const name = document.getElementById("name").value;
   const room = document.getElementById("room").value;
 
+  if(!name || !room){
+    alert("Заполни всё");
+    return;
+  }
+
   localStorage.setItem("name", name);
   localStorage.setItem("room", room);
-  localStorage.setItem("token", "red");
+  localStorage.setItem("token", selected);
 
-  socket.emit("join", {name, room, token:"red"});
-}
+  socket.emit("join", {name, room, token:selected});
+};
 
-function start(){
+// 👥 игроки
+socket.on("players", players=>{
+  document.getElementById("players").innerHTML =
+    players.map(p=>`<div style="margin:5px">${p.name} (${p.token})</div>`).join("");
+
+  if(players.length >= 1){ // можно тестить одной
+    document.getElementById("startBtn").classList.remove("hidden");
+  }
+});
+
+// 🚀 старт
+document.getElementById("startBtn").onclick = ()=>{
   socket.emit("startGame");
-}
+};
 
 socket.on("startGame", ()=>{
   window.location.href = "game.html";
